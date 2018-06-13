@@ -1,0 +1,18 @@
+# UI
+main_menu_title=Main-Menu
+ui_error_title=UI-Error
+ui_error_fullscreen_switchOff=Error while trying to switch off Fullscreen-Mode.\n\nError:\n%error%
+
+# UI-Components
+play-new_button=New Game
+load-game_button=Load Game
+exit_button=
+
+
+# Installer
+installer_title=Installer
+installer_title_F=Installation-Error
+installer_start-question=It seems like you did not install the program yet.\nTo unlock all features you will need to install the program.\n\nDo you want to install the program now ?\n\n\nIf you did install the program already you can check your installation for errors by clicking yes.\n\n\n\nNote: Directory for installation: %installation_dir%\n\n
+installer_failed=Installation failed!\n\nError:\n%error%\n\n
+installer_procF_s=Successfully created Installer-Process-File!\n\nInstallation completed.\n\n
+installer_procF_f=Creation of Installer-Process-File failed!\n\nInstallation completed.\n\n
