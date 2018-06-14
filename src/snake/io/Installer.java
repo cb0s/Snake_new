@@ -15,9 +15,6 @@ import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
-import snake.Error;
-import snake.SnakeGame;
-
 /** 
  * 	@author Cedric	
  *	@version 1.0
@@ -41,8 +38,16 @@ public class Installer {
 	}
 	
 	private static void log(String s) {
-		SnakeGame.log(s);
+		if (s.substring(0, 4).equals("INFO")) Logger.getDefaultLogger().logInfo(s.substring(5));
+		else if (s.substring(0, 7).equals("WARNING")) Logger.getDefaultLogger().logWarning(s.substring(8));
+		else if (s.substring(0, 5).equals("ERROR")) Logger.getDefaultLogger().logError(s.substring(6));
 		installationProcess.add(Logger.getTime() + " " + s);
+	}
+	
+	private enum LoggingType {
+		INFO,
+		WARNING,
+		ERROR;
 	}
 	
 	public static void install(boolean replace) {
@@ -55,19 +60,19 @@ public class Installer {
 				ArrayList<String> files = new ArrayList<String>();
 				
 				try {
-					log(Logger.LoggingType.INFO.type + "Starting installation");
+					log(LoggingType.INFO + "Starting installation");
 					if(installed) {
-						log(Logger.LoggingType.WARNING.type + "Game is already installed!");
+						log(LoggingType.WARNING + "Game is already installed!");
 						if(!replace) {
 							progress = 100;
 							return;
 						}
-						log(Logger.LoggingType.WARNING.type + "Reinstalling...");
+						log(LoggingType.WARNING + "Reinstalling...");
 					}
 					
 					String jarPath = Installer.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceAll(File.pathSeparator, "/");
 					
-					log(Logger.LoggingType.INFO.type + "Loading installation script");	
+					log(LoggingType.INFO + "Loading installation script");	
 					InputStream script = Installer.class.getResourceAsStream("/data/installer.script");
 					String line = "";
 					while(script.available() > 0) {
@@ -81,7 +86,7 @@ public class Installer {
 						}
 					}
 					script.close();
-					log(Logger.LoggingType.INFO.type + "Script loaded. Installation will start now");
+					log(LoggingType.INFO + "Script loaded. Installation will start now");
 					
 					progress = (int) 100 / files.size();
 					
@@ -102,7 +107,7 @@ public class Installer {
 						if(fileName.endsWith("/")) {
 							f.mkdirs();
 							filesInstalled.add(f.getAbsolutePath());
-							log(Logger.LoggingType.INFO.type + f.getAbsolutePath() + " created");
+							log(LoggingType.INFO + f.getAbsolutePath() + " created");
 							progress = (int) (100 / files.size())*filesInstalled.size();
 							continue;
 						}
@@ -114,11 +119,11 @@ public class Installer {
 						}
 						in.close();
 						out.close();
-						log(Logger.LoggingType.INFO.type + f.getAbsolutePath() + " installed");
+						log(LoggingType.INFO + f.getAbsolutePath() + " installed");
 						progress = (int) (100 / files.size())*filesInstalled.size();
 					}
 					jar.close();
-					log(Logger.LoggingType.INFO.type + "Successfully installed. Restart the game now");
+					log(LoggingType.INFO + "Successfully installed. Restart the game now");
 					JOptionPane.showMessageDialog(null, "Successfully installed!\nRestart the game now to finish installation", "Installation completed", JOptionPane.INFORMATION_MESSAGE);
 					PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(new File("data/installed.0"))));
 					w.println("Successfully installed, " + Logger.getTime());
@@ -128,15 +133,15 @@ public class Installer {
 						File delFile = new File(filesInstalled.get(i));
 						if (delFile.exists()) delFile.delete();
 						filesInstalled.remove(i);
-						log(Logger.LoggingType.WARNING.type + delFile.getAbsolutePath() + " deleted");
+						log(LoggingType.WARNING + delFile.getAbsolutePath() + " deleted");
 					}
-					log(Logger.LoggingType.ERROR.type + "Installing failed! Exiting installer...");
-					String error = Error.printError(e);
+					log(LoggingType.ERROR + "Installing failed! Exiting installer...");
+					String error = Logger.getDefaultLogger().logException(e);
 					installationProcess.add("Error: " + error);
 					JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_failed").replace("%error%", error), LangAdapter.getString("installer_title_F"), JOptionPane.ERROR_MESSAGE);
 				} finally {
 					try {
-						SnakeGame.log(Logger.LoggingType.INFO.type + "Trying to create installation-process file");
+						Logger.getDefaultLogger().logInfo("Trying to create installation-process file");
 						File processFile = new File("installation.txt");
 						if(processFile.exists()) processFile.delete();
 						PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(processFile)));
@@ -144,10 +149,10 @@ public class Installer {
 							w.println(s);
 						}
 						w.close();
-						SnakeGame.log(Logger.LoggingType.INFO.type + "Installation-process file successfully created");
+						Logger.getDefaultLogger().logInfo("Installation-process file successfully created");
 						JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_procF_s"), LangAdapter.getString("installer_title"), JOptionPane.ERROR_MESSAGE);
 					} catch(Exception e) {
-						SnakeGame.log(Logger.LoggingType.ERROR.type + "Couldn't create installation-process file");
+						Logger.getDefaultLogger().logError("Couldn't create installation-process file");
 						JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_procF_f"), LangAdapter.getString("installer_title_F"), JOptionPane.ERROR_MESSAGE);
 					}
 				}

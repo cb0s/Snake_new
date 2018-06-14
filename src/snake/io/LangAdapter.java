@@ -9,9 +9,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
-import snake.Error;
-import snake.SnakeGame;
-
 /**
  * 	@author Cedric	
  *	@version 1.0
@@ -32,17 +29,17 @@ public class LangAdapter {
 			else
 				resource = new PropertyResourceBundle(LangAdapter.class.getResourceAsStream("/" + path + "_" + locale.getLanguage() + "_" + locale.getCountry().toUpperCase() + ".lang"));
 		} catch (IOException e) {
-			SnakeGame.log(Logger.LoggingType.ERROR.type + "Couldn't load language!");
-			String error = Error.printError(e);
-			SnakeGame.log(Logger.LoggingType.WARNING.type + "Using default language instead");
+			Logger.getDefaultLogger().logError("Couldn't load language!");
+			String error = Logger.getDefaultLogger().logException(e);
+			Logger.getDefaultLogger().logWarning("Using default language instead");
 			try {
 				if (Installer.isInstalled())
 					resource = new PropertyResourceBundle(LangAdapter.class.getClassLoader().getResourceAsStream(path + "_snake_de_DE.lang"));
 				else
 					resource = new PropertyResourceBundle(new FileInputStream(new File(path + "_snake_de_DE.lang")));
 			} catch (IOException e1) {
-				SnakeGame.log(Logger.LoggingType.ERROR.type + "Loading Backup-Language failed! Exiting...");
-				error = Error.printError(e1);
+				Logger.getDefaultLogger().logError("Loading Backup-Language failed! Exiting...");
+				error = Logger.getDefaultLogger().logException(e1);
 				JOptionPane.showMessageDialog(null, "Loading languages failed!\n\nError: " + error + "\n\nExiting...", "Language Error!", JOptionPane.ERROR_MESSAGE);
 				System.exit(1);
 			}
@@ -52,10 +49,10 @@ public class LangAdapter {
 	
 	public static String getString(String key) {
 		if(resource.containsKey(key)) {
-			SnakeGame.log(Logger.LoggingType.INFO.type + "Loading " + key + " from Lang-File " + path + "_"+ locale.toString() + ".lang");
+			Logger.getDefaultLogger().logInfo("Loading " + key + " from Lang-File " + path + "_"+ locale.toString() + ".lang");
 			return resource.getString(key);
 		}
-		SnakeGame.log(Logger.LoggingType.WARNING.type + "Couldn't load " + key + " from Lang-File " + path + "_"+ locale.toString() + ".lang");
+		Logger.getDefaultLogger().logWarning("Couldn't load " + key + " from Lang-File " + path + "_"+ locale.toString() + ".lang");
 		return null;
 	}
 }

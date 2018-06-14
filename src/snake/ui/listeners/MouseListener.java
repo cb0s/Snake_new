@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import snake.SnakeGame;
 import snake.io.Logger;
 import snake.ui.Button;
 import snake.ui.Button.buttonStates;
@@ -57,11 +56,11 @@ public class MouseListener implements java.awt.event.MouseMotionListener, java.a
 					} else button.setButtonState(buttonStates.RELEASED.id);
 					if (notUsedButton.contains(button.getID())) {
 						notUsedButton.remove(button.getID());
-						SnakeGame.log(Logger.LoggingType.INFO.type + "Button " + button.getID() + " with the label " + button.getLabel() + " is now used");
+						Logger.getDefaultLogger().logInfo("Button " + button.getID() + " with the label " + button.getLabel() + " is now used");
 					}
 				} catch(IllegalComponentStateException e) {
 					if (!notUsedButton.contains(button.getID())) {
-						SnakeGame.log(Logger.LoggingType.WARNING.type + "Button " + button.getID() + " with the label \"" + button.getLabel() + "\" is not used");
+						Logger.getDefaultLogger().logWarning("Button " + button.getID() + " with the label \"" + button.getLabel() + "\" is not used");
 						notUsedButton.add(button.getID());
 					}
 				}
@@ -101,12 +100,12 @@ public class MouseListener implements java.awt.event.MouseMotionListener, java.a
 						button.setButtonState(buttonStates.PRESSED.id);
 						if (notUsedButton.contains(button.getID())) {
 							notUsedButton.remove(button.getID());
-							SnakeGame.log(Logger.LoggingType.INFO.type + "Button " + button.getID() + " with the label " + button.getLabel() + " is now used");
+							Logger.getDefaultLogger().logInfo("Button " + button.getID() + " with the label " + button.getLabel() + " is now used");
 						}
 					}
 				} catch (IllegalStateException e) {
 					if (!notUsedButton.contains(button.getID())) {
-						SnakeGame.log(Logger.LoggingType.WARNING.type + "Button " + button.getID() + " with the label \"" + button.getLabel() + "\" is not used");
+						Logger.getDefaultLogger().logWarning("Button " + button.getID() + " with the label \"" + button.getLabel() + "\" is not used");
 						notUsedButton.add(button.getID());
 					}
 				}
@@ -143,12 +142,12 @@ public class MouseListener implements java.awt.event.MouseMotionListener, java.a
 						else button.setButtonState(buttonStates.RELEASED.id);
 						if (notUsedButton.contains(button.getID())) {
 							notUsedButton.remove(button.getID());
-							SnakeGame.log(Logger.LoggingType.INFO.type + "Button " + button.getID() + " with the label " + button.getLabel() + " is now used");
+							Logger.getDefaultLogger().logInfo("Button " + button.getID() + " with the label " + button.getLabel() + " is now used");
 						}
 					}
 				} catch (IllegalStateException e) {
 					if (!notUsedButton.contains(button.getID())) {
-						SnakeGame.log(Logger.LoggingType.WARNING.type + "Button " + button.getID() + " with the label \"" + button.getLabel() + "\" is not used");
+						Logger.getDefaultLogger().logWarning("Button " + button.getID() + " with the label \"" + button.getLabel() + "\" is not used");
 						notUsedButton.add(button.getID());
 					}
 				}

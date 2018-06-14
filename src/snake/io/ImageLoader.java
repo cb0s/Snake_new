@@ -10,9 +10,6 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import snake.Error;
-import snake.SnakeGame;
-
 /** 
  * 	@author Cedric	
  *	@version 1.0
@@ -27,9 +24,9 @@ public class ImageLoader {
 			else
 				return ImageIO.read(ImageLoader.class.getResource("/" + path));
 		} catch (Exception e) {
-			SnakeGame.log(Logger.LoggingType.ERROR.type + "An error occured while loading image \"" + path + "\"!");
-			String error = Error.printError(e);
-			SnakeGame.log(Logger.LoggingType.WARNING.type + "Exiting now!");
+			Logger.getDefaultLogger().logError("An error occured while loading image \"" + path + "\"!");
+			String error = Logger.getDefaultLogger().logException(e);
+			Logger.getDefaultLogger().logWarning("Exiting now!");
 			JOptionPane.showMessageDialog(null, "An Error occured while loading image \"" + path + "\"\n\nError: " + error + "\n\nExiting now...", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}

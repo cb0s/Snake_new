@@ -4,9 +4,9 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-import snake.Error;
 import snake.SnakeGame;
 import snake.io.IniAdapter;
+import snake.io.Logger;
 import snake.ui.GameClock;
 import snake.ui.UIManager;
 
@@ -26,7 +26,7 @@ public class ResizeListener {
 			public void run () {
 				while(GameClock.isRunning()) {
 					size = frame.getSize();
-					try { Thread.sleep(tick); } catch (InterruptedException e) { Error.printError(e); }
+					try { Thread.sleep(tick); } catch (InterruptedException e) { Logger.getDefaultLogger().logException(e); }
 					if (!frame.getSize().equals(size)) UIManager.updateLayout();
 				}
 			}
