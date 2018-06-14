@@ -2,39 +2,209 @@ package snake.io;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import snake.SnakeGame;
 
 /**
- *	@author Cedric	
- *	@version 1.0
- *	@category io
+ * @author Leo
+ * @version 2.0
+ * @category io
  */
-
 public class Logger {
+
+	// ******************************
+	// Constants
+	// ******************************
 	public final static IniAdapter ini;
-	private boolean logging;
-	private File logger;
-	private long start;
 	private static final boolean loadMonthFromLang;
-	private static final boolean startNewThread;
-	
+	private static final String INFO_PREFIX = "[Info]";
+	private static final String WARNING_PREFIX = "[Warning]";
+	private static final String ERROR_PREFIX = "[Error]";
+
 	static {
 		ini = new IniAdapter();
 		loadMonthFromLang = Boolean.parseBoolean(ini.getString(SnakeGame.loggerIniPath, "loadFromLangFiles"));
-		startNewThread = Boolean.parseBoolean(ini.getString(SnakeGame.loggerIniPath, "startNewThread"));
+		
+		boolean fileLogging = false;
+		if(Installer.isInstalled()) {
+			if(Boolean.parseBoolean(ConfigAdapter.getConfigString("logging"))) fileLogging = true;
+			/*
+			else if(args.length != 0) {
+				for(int i = 0; i < args.length; i++) {
+					if(args[i].equalsIgnoreCase("-d")) {
+						if(ConfigAdapter.getConfigString("debugging").equals("on")) {
+							fileLogging = true;
+						} else {
+							fileLogging = false;
+						}
+					} else if(args.length != i+1) {
+						if(args[i].equalsIgnoreCase("-dp")) {
+							if(args[i+1].equalsIgnoreCase("on")) {
+								ConfigAdapter.setConfigString("logging", "true");
+								ConfigAdapter.setConfigString("debugging", "on");
+							}
+							else if(args[i+1].equalsIgnoreCase("off")) ConfigAdapter.setConfigString("logging", "false");
+							fileLogging = true;
+						}
+						if(args[i].equalsIgnoreCase("-da")) {
+							if(args[i+1].equalsIgnoreCase("on")) {
+								ConfigAdapter.setConfigString("debugging", "on");
+								fileLogging = true;
+							} else {
+								ConfigAdapter.setConfigString("debugging", "off");
+								fileLogging = false;
+							}
+						}
+					} else {
+						System.out.println(Logger.LoggingType.WARNING.type + "Unknown arguments...");
+						break;
+					}
+				}
+			}
+			*/
+		} else fileLogging = false;
+		setDefaultLogger(new Logger(fileLogging));
+	}
+
+	
+	
+	
+	// ******************************
+	// Fields
+	// ******************************
+	private static Logger defaultLogger;
+	
+	private LinkedBlockingQueue<String> messages;
+	private PrintWriter logFileWriter;
+
+	
+	
+
+	// ******************************
+	// Constructors
+	// ******************************
+	/**
+	 * Creates a new logger.
+	 */
+	public Logger() {
+		this(null);
 	}
 	
-	public Logger(boolean logging) {
-		this.logging = logging;
+	/**
+	 * Creates a new logger. If fileLogging is true, the log output will be written into the standard logfile.
+	 * 
+	 * @param fileLogging whether the log output will be written into the standard logfile
+	 */
+	public Logger(boolean fileLogging) {
+		this(new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake.log"));
 	}
+
+	/**
+	 * Creates a new logger that writes its ouput into the given file.
+	 * 
+	 * @param logfile the file to write the log output into
+	 */
+	public Logger(File logfile) {
+		messages = new LinkedBlockingQueue<>();
+		
+		//initiates logfile writer if requested
+		if(logfile != null) {
+			try {
+				if(!logfile.exists())
+					logfile.createNewFile();
+				logFileWriter = new PrintWriter(new FileWriter(logfile, true));
+				logFileWriter.write("\n----------------------------new-Session-started----------------------------\n");
+				logFileWriter.flush();
+			} catch (IOException e) {
+				logError("Error while initializing logfile.");
+				logError(e.getMessage());
+				logFileWriter = null;
+			}
+		}
+
+		//processes the elements in the messages queue in a separate thread
+		Thread loggerWorker = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						String message = messages.take();
+						System.out.println(message);
+
+						if(logFileWriter != null) {
+							logFileWriter.println(message);
+							logFileWriter.flush();
+						}
+
+					} catch (InterruptedException e) {
+						logError(e.getMessage());
+					}
+				}
+			}
+		});
+		//optional
+		loggerWorker.setDaemon(true);
+		//end-optional
+		loggerWorker.start();
+	}
+
 	
-	public Logger(boolean logging, File file) {
-		this.logging = logging;
-		logger = file;
+	
+
+	// ******************************
+	// Private methods
+	// ******************************
+	private static String getTime() {
+		GregorianCalendar gregorianCalendar = new GregorianCalendar();
+		int day_i = gregorianCalendar.get(Calendar.DAY_OF_MONTH);
+		int month_i = gregorianCalendar.get(Calendar.MONTH)+1;
+		int year = gregorianCalendar.get(Calendar.YEAR);
+		int hour_i = gregorianCalendar.get(Calendar.HOUR);
+		int hour24_i = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
+		String am_pm = gregorianCalendar.get(Calendar.AM_PM) == Calendar.AM ? "a" : "p";
+		int minute_i = gregorianCalendar.get(Calendar.MINUTE);
+		int second_i = gregorianCalendar.get(Calendar.SECOND);
+
+		String day = day_i < 10 ? "0" + day_i : ""+day_i;
+		String month = month_i < 10 ? "0" + month_i : ""+month_i;
+		String hour = hour_i < 10 ? "0" + hour_i : ""+hour_i;
+		String hour24 = hour24_i < 10 ? "0" + hour24_i : ""+hour24_i;
+		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
+		String second = second_i < 10 ? "0" + second_i : ""+second_i;
+
+		switch(ini.getString(SnakeGame.loggerIniPath, "time_format")) {
+		case "dd/m/yyyy-24hh:mm:ss":
+			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
+		case "dd/m/yyyy-hh:mm:ss":
+			return day + "/" + month + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "m/dd/yyyy-hh:mm:ss":
+			return month + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/m/dd-24hh:mm:ss":
+			return year + "/" + month + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
+		case "yyyy/m/dd-hh:mm:ss":
+			return year + "/" + month + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/dd/m-hh:mm:ss":
+			return year + "/" + day + "/" + month + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "dd/mmm/yyyy-24hh:mm:ss":
+			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
+		case "dd/mmm/yyyy-hh:mm:ss":
+			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "mmm/dd/yyyy-hh:mm:ss":
+			return Months.getMonth(month_i).getMonthSF() + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/mmm/dd-24hh:mm:ss":
+			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
+		case "yyyy/mmm/dd-hh:mm:ss":
+			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/dd/mmm-hh:mm:ss":
+			return year + "/" + day + "/" + Months.getMonth(month_i).getMonthSF() + "-" + hour + am_pm + ":" + minute + ":" + second;
+		default:
+			return gregorianCalendar.getTime().toString();
+		}
 	}
 	
 	private enum Months {
@@ -50,17 +220,17 @@ public class Logger {
 		OCTOBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "October") : LangAdapter.getString("October")),
 		NOVEMBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "November") : LangAdapter.getString("November")),
 		DECEMBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "December") : LangAdapter.getString("December"));
-		
+
 		private final String monthShortForm;
-		
+
 		private Months(String monthShortForm) {
 			this.monthShortForm = monthShortForm;
 		}
-		
+
 		private String getMonthSF() {
 			return monthShortForm;
 		}
-		
+
 		private static Months getMonth(int id) {
 			switch(id) {
 			case 1:
@@ -92,76 +262,117 @@ public class Logger {
 			}
 		}
 	}
-	
-	public enum LoggingType {
-		INFO("[Info] "),
-		WARNING("[Warning] "),
-		ERROR("[Error] ");
-		
-		public final String type;
-		
-		private LoggingType(String type) {
-			this.type = type;
-		}
-	}
-	
-	public static String getTime() {
-		GregorianCalendar gregorianCalendar = new GregorianCalendar();
-		int day_i = gregorianCalendar.get(Calendar.DAY_OF_MONTH);
-		int month_i = gregorianCalendar.get(Calendar.MONTH)+1;
-		int year = gregorianCalendar.get(Calendar.YEAR);
-		int hour_i = gregorianCalendar.get(Calendar.HOUR);
-		int hour24_i = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
-		String am_pm = gregorianCalendar.get(Calendar.AM_PM) == Calendar.AM ? "a" : "p";
-		int minute_i = gregorianCalendar.get(Calendar.MINUTE);
-		int second_i = gregorianCalendar.get(Calendar.SECOND);
-		
-		String day = day_i < 10 ? "0" + day_i : ""+day_i;
-		String month = month_i < 10 ? "0" + month_i : ""+month_i;
-		String hour = hour_i < 10 ? "0" + hour_i : ""+hour_i;
-		String hour24 = hour24_i < 10 ? "0" + hour24_i : ""+hour24_i;
-		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
-		String second = second_i < 10 ? "0" + second_i : ""+second_i;
-		
-		switch(ini.getString(SnakeGame.loggerIniPath, "time_format")) {
-		case "dd/m/yyyy-24hh:mm:ss":
-			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/m/yyyy-hh:mm:ss":
-			return day + "/" + month + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "m/dd/yyyy-hh:mm:ss":
-			return month + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/m/dd-24hh:mm:ss":
-			return year + "/" + month + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/m/dd-hh:mm:ss":
-			return year + "/" + month + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/m-hh:mm:ss":
-			return year + "/" + day + "/" + month + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "dd/mmm/yyyy-24hh:mm:ss":
-			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/mmm/yyyy-hh:mm:ss":
-			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "mmm/dd/yyyy-hh:mm:ss":
-			return Months.getMonth(month_i).getMonthSF() + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/mmm/dd-24hh:mm:ss":
-			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/mmm/dd-hh:mm:ss":
-			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/mmm-hh:mm:ss":
-			return year + "/" + day + "/" + Months.getMonth(month_i).getMonthSF() + "-" + hour + am_pm + ":" + minute + ":" + second;
-		default:
-			return ""+gregorianCalendar.getTime();
+
+	/**
+	 * Internal method for adding text with a timestamp to the logger buffer.
+	 * 
+	 * @param text the text to enqueue in the buffer
+	 */
+	private synchronized void log(String text) {
+		try {
+			messages.add("["+getTime()+"] " + text);
+		} catch (IllegalStateException e) {
+			System.out.println("Logger buffer out of bounds!");
+			e.printStackTrace();
 		}
 	}
 
-	public void log(String s) {
+	
+	
+	
+	// ******************************
+	// Public methods
+	// ******************************
+	/**
+	 * Returns the default logger.
+	 * 
+	 * @return the default logger
+	 */
+	public static Logger getDefaultLogger() {
+		return defaultLogger;
+	}
+
+	/**
+	 * Sets the default logger.
+	 * 
+	 * @param defaultLogger the logger to set as default
+	 */
+	public static void setDefaultLogger(Logger defaultLogger) {
+		Logger.defaultLogger = defaultLogger;
+	}
+
+	
+	
+	/**
+	 * Logs an information text.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logInfo(String text) {
+		log(INFO_PREFIX + " " + text);
+	}
+
+	/**
+	 * Logs a warning text.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logWarning(String text) {
+		log(WARNING_PREFIX + " " + text);
+	}
+
+	/**
+	 * Logs an error text.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logError(String text) {
+		log(ERROR_PREFIX + " " + text);
+	}
+	
+	/**
+	 * Logs an exception like an error message.<br>
+	 * (Replaces Error class.)
+	 * 
+	 * @param exception the exception to log
+	 * @return 
+	 */
+	public synchronized String logException(Exception exception) {
+		String msg = "";
+		for (StackTraceElement ste : exception.getStackTrace()) {
+			msg+=ste.toString()+'\n';
+		}
+		logError("Error-Message: " + msg);
+		return msg;
+	}
+	
+	/**
+	 * Returns whether the logger is writing its output into a file.
+	 * 
+	 * @return whether file logging is activated
+	 */
+	public boolean isFileLogging() {
+		return logFileWriter != null;
+	}
+
+	
+	
+
+
+
+
+
+
+	/*
+	public void log_old(String s) {
 		Runnable r = new Runnable() {
 			@Override
 			public void run () {
 				String date = getTime();
 				String msg = "[" + date + "] " + s;
 				System.out.println(msg);
-				
-				if(logging) {
+
+				if(fileLogging) {
 					try {
 						boolean breakup = false;
 						switch (ini.getString(SnakeGame.loggerIniPath, "timeAfterSplit")) {
@@ -193,10 +404,10 @@ public class Logger {
 						w.flush();
 						w.close();
 					} catch(Exception exception) {
-						logging = false;
+						fileLogging = false;
 						exception.printStackTrace();
 						log(LoggingType.ERROR.type + exception.toString());
-						logging = true;
+						fileLogging = true;
 					}
 				}
 			}
@@ -204,4 +415,5 @@ public class Logger {
 		if (startNewThread) new Thread (r).start();
 		else r.run();
 	}
+	*/
 }
