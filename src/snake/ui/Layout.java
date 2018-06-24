@@ -8,8 +8,6 @@ import java.util.LinkedList;
 
 import javax.swing.JComponent;
 
-import snake.io.Logger;
-
 /**
  * 
  * @author Cedric
@@ -72,7 +70,7 @@ public class Layout {
 				c.setSize((int) (c.getSize().width / changeX), (int) (c.getSize().height / changeY));
 				c.setLocation((int) (c.getLocation().x / changeX), (int) (c.getLocation().y / changeY));
 				cs[j] = c;
-				GameClock.renderLog(Logger.LoggingType.INFO.type + "Component " + j + " of Layer " + i + " was changed");
+				GameClock.getRenderLogger().logInfo("Component " + j + " of Layer " + i + " was changed");
 			}
 			layers.set(i, cs);
 		}

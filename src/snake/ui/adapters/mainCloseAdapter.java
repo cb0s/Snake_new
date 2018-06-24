@@ -16,7 +16,7 @@ public class mainCloseAdapter extends WindowAdapter {
 	
 	@Override
 	public void windowClosing(WindowEvent event) {
-		SnakeGame.log(Logger.LoggingType.INFO.type + "Main-Window-Closing is called");
+		Logger.getDefaultLogger().logInfo("Main-Window-Closing is called");
 		SnakeGame.stop();
 	}
 }

@@ -21,17 +21,22 @@ public class GameClock {
 	private static int tick;
 //	private static int ups = 60;
 	private static int fps = 60;
-	private static Logger log;
+	private static Logger renderLog;
 	
 	static {
 		running = true;
 //		ups = Integer.parseInt(ConfigAdapter.getConfigString("max_updates"));
 		fps = Integer.parseInt(ConfigAdapter.getConfigString("max_frames"));
 		tick = (int) Maths.format(ConfigAdapter.getConfigString("renderlog_tick").replaceAll("%frames%", ""+fps));
-		log = new Logger(SnakeGame.isLogging(), new File(Logger.ini.getString(SnakeGame.iniPath, "path").replace("*", "render_log")));
-		renderLog("----Render-Logger--initialized----");
+		renderLog = new Logger(new File(Logger.ini.getString(SnakeGame.iniPath, "path").replace("*", "render_log")));
+		renderLog.logPlain("----Render-Logger--initialized----");
 	}
 	
+	static Logger getRenderLogger() {
+		return renderLog;
+	}
+	
+	// 
 	public static void start() {
 		Thread gameThread = new Thread(new Runnable() {
 			@Override
@@ -73,7 +78,7 @@ public class GameClock {
 					
 					if(System.currentTimeMillis() > timer + 1000) {
 						if ((System.currentTimeMillis()-lastPrint)%(100*tick) < 50) {
-							renderLog(Logger.LoggingType.INFO.type + "Ups: " + ups + "    |    Fps: " + fps);
+							renderLog.logInfo("Ups: " + ups + "    |    Fps: " + fps);
 						}
 						ups = 0;
 						fps = 0;
@@ -91,10 +96,6 @@ public class GameClock {
 	
 	public static boolean isRunning() {
 		return running;
-	}
-	
-	public static void renderLog(String s) {
-		log.log(s);
 	}
 	
 }

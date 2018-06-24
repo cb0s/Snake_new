@@ -68,7 +68,7 @@ public class UIManager {
 		exit.setLocation(WindowAdapter.mainGetDimensions().width-exit.getPreferredSize().width, 0);
 		exit.setBounds(exit.getLocation().x, exit.getLocation().y, exit.getPreferredSize().width, exit.getPreferredSize().height);
 		exit.addActionListener(e -> {
-			SnakeGame.log(Logger.LoggingType.INFO.type + "Close Button has been pressed in full-screen");
+			Logger.getDefaultLogger().logInfo("Close Button has been pressed in full-screen");
 			SnakeGame.stop();
 		});
 		exit.setResizeable(false);
@@ -79,7 +79,7 @@ public class UIManager {
 		maximize.setBounds(maximize.getLocation().x, maximize.getLocation().y, maximize.getPreferredSize().width, maximize.getPreferredSize().height);
 		maximize.addActionListener(e -> {
 		if (WindowAdapter.isMainFullscreen()) WindowAdapter.mainSetToNormalScreen();
-		else SnakeGame.log(Logger.LoggingType.WARNING.type + "Maximize-Button was pressed although it should not be present!");
+		else Logger.getDefaultLogger().logWarning("Maximize-Button was pressed although it should not be present!");
 			mainLayout.remove(controlButtonFullscreen_layer);
 			displayUpdatedLayout();
 		});
@@ -108,7 +108,7 @@ public class UIManager {
 		
 		Button play_new = new Button(LangAdapter.getString("play-new_button"));
 		play_new.addActionListener(e -> {
-			SnakeGame.log(Logger.LoggingType.INFO.type + "Play-New-Game-Button was pressed");
+			Logger.getDefaultLogger().logInfo("Play-New-Game-Button was pressed");
 			setGame();
 		});
 		

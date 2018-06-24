@@ -159,53 +159,6 @@ public class Logger {
 	// ******************************
 	// Private methods
 	// ******************************
-	private static String getTime() {
-		GregorianCalendar gregorianCalendar = new GregorianCalendar();
-		int day_i = gregorianCalendar.get(Calendar.DAY_OF_MONTH);
-		int month_i = gregorianCalendar.get(Calendar.MONTH)+1;
-		int year = gregorianCalendar.get(Calendar.YEAR);
-		int hour_i = gregorianCalendar.get(Calendar.HOUR);
-		int hour24_i = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
-		String am_pm = gregorianCalendar.get(Calendar.AM_PM) == Calendar.AM ? "a" : "p";
-		int minute_i = gregorianCalendar.get(Calendar.MINUTE);
-		int second_i = gregorianCalendar.get(Calendar.SECOND);
-
-		String day = day_i < 10 ? "0" + day_i : ""+day_i;
-		String month = month_i < 10 ? "0" + month_i : ""+month_i;
-		String hour = hour_i < 10 ? "0" + hour_i : ""+hour_i;
-		String hour24 = hour24_i < 10 ? "0" + hour24_i : ""+hour24_i;
-		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
-		String second = second_i < 10 ? "0" + second_i : ""+second_i;
-
-		switch(ini.getString(SnakeGame.loggerIniPath, "time_format")) {
-		case "dd/m/yyyy-24hh:mm:ss":
-			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/m/yyyy-hh:mm:ss":
-			return day + "/" + month + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "m/dd/yyyy-hh:mm:ss":
-			return month + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/m/dd-24hh:mm:ss":
-			return year + "/" + month + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/m/dd-hh:mm:ss":
-			return year + "/" + month + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/m-hh:mm:ss":
-			return year + "/" + day + "/" + month + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "dd/mmm/yyyy-24hh:mm:ss":
-			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/mmm/yyyy-hh:mm:ss":
-			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "mmm/dd/yyyy-hh:mm:ss":
-			return Months.getMonth(month_i).getMonthSF() + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/mmm/dd-24hh:mm:ss":
-			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/mmm/dd-hh:mm:ss":
-			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/mmm-hh:mm:ss":
-			return year + "/" + day + "/" + Months.getMonth(month_i).getMonthSF() + "-" + hour + am_pm + ":" + minute + ":" + second;
-		default:
-			return gregorianCalendar.getTime().toString();
-		}
-	}
 	
 	private enum Months {
 		JANUARY(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "January") : LangAdapter.getString("January")),
@@ -284,6 +237,59 @@ public class Logger {
 	// Public methods
 	// ******************************
 	/**
+	 * Returns the time at the moment, it gets called
+	 * 
+	 * @return Returns the time at the moment, it gets called
+	 */
+	public static String getTime() {
+		GregorianCalendar gregorianCalendar = new GregorianCalendar();
+		int day_i = gregorianCalendar.get(Calendar.DAY_OF_MONTH);
+		int month_i = gregorianCalendar.get(Calendar.MONTH)+1;
+		int year = gregorianCalendar.get(Calendar.YEAR);
+		int hour_i = gregorianCalendar.get(Calendar.HOUR);
+		int hour24_i = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
+		String am_pm = gregorianCalendar.get(Calendar.AM_PM) == Calendar.AM ? "a" : "p";
+		int minute_i = gregorianCalendar.get(Calendar.MINUTE);
+		int second_i = gregorianCalendar.get(Calendar.SECOND);
+
+		String day = day_i < 10 ? "0" + day_i : ""+day_i;
+		String month = month_i < 10 ? "0" + month_i : ""+month_i;
+		String hour = hour_i < 10 ? "0" + hour_i : ""+hour_i;
+		String hour24 = hour24_i < 10 ? "0" + hour24_i : ""+hour24_i;
+		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
+		String second = second_i < 10 ? "0" + second_i : ""+second_i;
+
+		switch(ini.getString(SnakeGame.loggerIniPath, "time_format")) {
+		case "dd/m/yyyy-24hh:mm:ss":
+			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
+		case "dd/m/yyyy-hh:mm:ss":
+			return day + "/" + month + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "m/dd/yyyy-hh:mm:ss":
+			return month + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/m/dd-24hh:mm:ss":
+			return year + "/" + month + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
+		case "yyyy/m/dd-hh:mm:ss":
+			return year + "/" + month + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/dd/m-hh:mm:ss":
+			return year + "/" + day + "/" + month + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "dd/mmm/yyyy-24hh:mm:ss":
+			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
+		case "dd/mmm/yyyy-hh:mm:ss":
+			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "mmm/dd/yyyy-hh:mm:ss":
+			return Months.getMonth(month_i).getMonthSF() + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/mmm/dd-24hh:mm:ss":
+			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
+		case "yyyy/mmm/dd-hh:mm:ss":
+			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
+		case "yyyy/dd/mmm-hh:mm:ss":
+			return year + "/" + day + "/" + Months.getMonth(month_i).getMonthSF() + "-" + hour + am_pm + ":" + minute + ":" + second;
+		default:
+			return gregorianCalendar.getTime().toString();
+		}
+	}
+	
+	/**
 	 * Returns the default logger.
 	 * 
 	 * @return the default logger
@@ -344,6 +350,15 @@ public class Logger {
 		}
 		logError("Error-Message: " + msg);
 		return msg;
+	}
+	
+	/**
+	 * Logs a plain text.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logPlain(String text) {
+		log(text);
 	}
 	
 	/**

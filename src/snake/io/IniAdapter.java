@@ -6,9 +6,6 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
-import snake.Error;
-import snake.SnakeGame;
-
 /** 
  * 	@author Cedric	
  *	@version 1.0
@@ -39,7 +36,7 @@ public class IniAdapter {
 			notFromLogger = (!st.getClassName().contains("snake.io.Logger") && notFromLogger);
 		
 		if(notFromLogger) {
-			SnakeGame.log(Logger.LoggingType.INFO.type + "Loading " + key + " from " + path);
+			Logger.getDefaultLogger().logInfo("Loading " + key + " from " + path);
 		}
 		
 		if(path != lastIniPath) {
@@ -52,8 +49,8 @@ public class IniAdapter {
 			} catch (Exception exception) {
 				// This Error can't be suppressed
 				if(notFromLogger) {
-					SnakeGame.log(Logger.LoggingType.ERROR.type + "Could't load " + key + " from " + path);
-					String error = Error.printError(exception);
+					Logger.getDefaultLogger().logError("Could't load " + key + " from " + path);
+					String error = Logger.getDefaultLogger().logException(exception);
 					JOptionPane.showMessageDialog(null, "Error while loading " + key + " from " + path + "!\nTrying to continue!\n\nError:\n" + error, "Warning", JOptionPane.WARNING_MESSAGE);
 				}
 				return null;
@@ -68,9 +65,9 @@ public class IniAdapter {
 				}
 			}
 		} catch(Exception exception) {
-			SnakeGame.log(Logger.LoggingType.ERROR.type + "Could't load " + key + " from " + path);
+			Logger.getDefaultLogger().logError("Could't load " + key + " from " + path);
 			if (!suppressErrors) {
-				String error = Error.printError(exception);
+				String error = Logger.getDefaultLogger().logException(exception);
 				JOptionPane.showMessageDialog(null, "Error while loading " + key + " from " + path + "!\nTrying to continue!\n\nError: " + error, "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
