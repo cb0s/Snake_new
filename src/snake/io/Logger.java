@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import snake.SnakeGame;
 
 /**
- * @author Leo
+ * @author Leo, Cedric
  * @version 2.0
  * @category io
  */
@@ -101,7 +101,7 @@ public class Logger {
 	 * @param fileLogging whether the log output will be written into the standard logfile
 	 */
 	public Logger(boolean fileLogging) {
-		this(new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake.log"));
+		this(fileLogging ? new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake.log") : null);
 	}
 
 	/**

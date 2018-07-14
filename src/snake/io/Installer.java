@@ -38,9 +38,9 @@ public class Installer {
 	}
 	
 	private static void log(String s) {
-		if (s.substring(0, 4).equals("INFO")) Logger.getDefaultLogger().logInfo(s.substring(5));
-		else if (s.substring(0, 7).equals("WARNING")) Logger.getDefaultLogger().logWarning(s.substring(8));
-		else if (s.substring(0, 5).equals("ERROR")) Logger.getDefaultLogger().logError(s.substring(6));
+		if (s.substring(0, 4).equals("INFO")) Logger.getDefaultLogger().logInfo(s.substring(4));
+		else if (s.substring(0, 7).equals("WARNING")) Logger.getDefaultLogger().logWarning(s.substring(7));
+		else if (s.substring(0, 5).equals("ERROR")) Logger.getDefaultLogger().logError(s.substring(5));
 		installationProcess.add(Logger.getTime() + " " + s);
 	}
 	
@@ -88,7 +88,7 @@ public class Installer {
 					script.close();
 					log(LoggingType.INFO + "Script loaded. Installation will start now");
 					
-					progress = (int) 100 / files.size();
+					progress = 0;
 					
 					JarFile jar = new JarFile(new File(jarPath));
 					Enumeration<JarEntry> entries = jar.entries();
@@ -108,7 +108,7 @@ public class Installer {
 							f.mkdirs();
 							filesInstalled.add(f.getAbsolutePath());
 							log(LoggingType.INFO + f.getAbsolutePath() + " created");
-							progress = (int) (100 / files.size())*filesInstalled.size();
+							progress = (int) filesInstalled.size()/files.size()*100;
 							continue;
 						}
 						f.createNewFile();
@@ -120,7 +120,7 @@ public class Installer {
 						in.close();
 						out.close();
 						log(LoggingType.INFO + f.getAbsolutePath() + " installed");
-						progress = (int) (100 / files.size())*filesInstalled.size();
+						progress = (int) filesInstalled.size()/files.size()*100;
 					}
 					jar.close();
 					log(LoggingType.INFO + "Successfully installed. Restart the game now");
