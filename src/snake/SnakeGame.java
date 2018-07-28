@@ -8,12 +8,12 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import snake.io.Installer;
-import snake.io.LangAdapter;
-import snake.io.Logger;
 import snake.ui.GameClock;
 import snake.ui.UIManager;
 import snake.ui.WindowAdapter;
+import utils.io.Installer;
+import utils.io.LangAdapter;
+import utils.io.Logger;
 
 /** 
  * 	@author Cedric	

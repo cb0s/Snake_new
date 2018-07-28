@@ -1,4 +1,4 @@
-package snake;
+package utils;
 
 /**
  * @author Cedric

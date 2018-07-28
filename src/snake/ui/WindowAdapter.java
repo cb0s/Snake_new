@@ -18,11 +18,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import snake.Maths;
 import snake.SnakeGame;
-import snake.io.IniAdapter;
-import snake.io.LangAdapter;
-import snake.io.Logger;
+import utils.Maths;
+import utils.io.IniAdapter;
+import utils.io.LangAdapter;
+import utils.io.Logger;
 
 /**
  * 

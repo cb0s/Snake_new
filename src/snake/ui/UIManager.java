@@ -6,13 +6,14 @@ import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
-import snake.Maths;
 import snake.SnakeGame;
-import snake.io.ImageLoader;
-import snake.io.LangAdapter;
-import snake.io.Logger;
 import snake.ui.adapters.mainCloseAdapter;
 import snake.ui.listeners.MouseListener;
+import utils.Maths;
+import utils.io.ImageLoader;
+import utils.io.LangAdapter;
+import utils.io.Logger;
+import utils.ui.Button;
 
 /** 
  * 	@author Cedric	

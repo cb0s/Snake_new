@@ -4,7 +4,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import snake.SnakeGame;
-import snake.io.Logger;
+import utils.io.Logger;
 
 /**
  * @author Cedric

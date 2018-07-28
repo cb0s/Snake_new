@@ -2,10 +2,10 @@ package snake.ui;
 
 import java.io.File;
 
-import snake.Maths;
 import snake.SnakeGame;
-import snake.io.ConfigAdapter;
-import snake.io.Logger;
+import utils.Maths;
+import utils.io.ConfigAdapter;
+import utils.io.Logger;
 
 /**
  * 
@@ -28,7 +28,8 @@ public class GameClock {
 //		ups = Integer.parseInt(ConfigAdapter.getConfigString("max_updates"));
 		fps = Integer.parseInt(ConfigAdapter.getConfigString("max_frames"));
 		tick = (int) Maths.format(ConfigAdapter.getConfigString("renderlog_tick").replaceAll("%frames%", ""+fps));
-		renderLog = new Logger(new File(Logger.ini.getString(SnakeGame.iniPath, "path").replace("*", "render_log")));
+		// TODO: Fix ini Access
+		renderLog = new Logger(new File(Logger.ini.getString(SnakeGame.iniPath, "path").replace("*", "render.log")));
 		renderLog.logPlain("----Render-Logger--initialized----");
 	}
 	

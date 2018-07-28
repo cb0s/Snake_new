@@ -1,4 +1,4 @@
-package snake.io;
+package utils.io;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,12 +27,13 @@ public class Logger {
 	private static final String ERROR_PREFIX = "[Error]";
 
 	static {
-		ini = new IniAdapter();
-		loadMonthFromLang = Boolean.parseBoolean(ini.getString(SnakeGame.loggerIniPath, "loadFromLangFiles"));
+		ini = new IniAdapter(SnakeGame.loggerIniPath);
+		loadMonthFromLang = Boolean.parseBoolean(ini.getString("loadFromLangFiles"));
 		
 		boolean fileLogging = false;
+		
 		if(Installer.isInstalled()) {
-			if(Boolean.parseBoolean(ConfigAdapter.getConfigString("logging"))) fileLogging = true;
+			if(Boolean.parseBoolean(ConfigAdapter.getDefaultConfig().getConfigString("logging"))) fileLogging = true;
 			/*
 			else if(args.length != 0) {
 				for(int i = 0; i < args.length; i++) {
@@ -67,7 +68,7 @@ public class Logger {
 				}
 			}
 			*/
-		} else fileLogging = false;
+		}
 		setDefaultLogger(new Logger(fileLogging));
 	}
 
@@ -101,7 +102,7 @@ public class Logger {
 	 * @param fileLogging whether the log output will be written into the standard logfile
 	 */
 	public Logger(boolean fileLogging) {
-		this(fileLogging ? new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake.log") : null);
+		this(fileLogging ? new File(ini.getString("path").replace("*", "") + "snake.log") : null);
 	}
 
 	/**
@@ -111,12 +112,15 @@ public class Logger {
 	 */
 	public Logger(File logfile) {
 		messages = new LinkedBlockingQueue<>();
-		
+
 		//initiates logfile writer if requested
 		if(logfile != null) {
 			try {
-				if(!logfile.exists())
+				if(!logfile.exists()) {
+					File dir = new File(logfile.getAbsolutePath().substring(0, logfile.getAbsolutePath().lastIndexOf(logfile.getName())));
+					if (!dir.exists()) dir.mkdir();
 					logfile.createNewFile();
+				}
 				logFileWriter = new PrintWriter(new FileWriter(logfile, true));
 				logFileWriter.write("\n----------------------------new-Session-started----------------------------\n");
 				logFileWriter.flush();
@@ -126,6 +130,7 @@ public class Logger {
 				logFileWriter = null;
 			}
 		}
+		System.out.println("\n----------------------------new-Session-started----------------------------\n");
 
 		//processes the elements in the messages queue in a separate thread
 		Thread loggerWorker = new Thread(new Runnable() {
@@ -161,18 +166,18 @@ public class Logger {
 	// ******************************
 	
 	private enum Months {
-		JANUARY(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "January") : LangAdapter.getString("January")),
-		FEBRUARY(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "February") : LangAdapter.getString("February")),
-		MARCH(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "March") : LangAdapter.getString("March")),
-		APRIL(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "April") : LangAdapter.getString("April")),
-		MAY(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "May") : LangAdapter.getString("May")),
-		JUNE(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "June") : LangAdapter.getString("June")),
-		JULY(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "July") : LangAdapter.getString("July")),
-		AUGUST(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "August") : LangAdapter.getString("August")),
-		SEPTEMBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "September") : LangAdapter.getString("September")),
-		OCTOBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "October") : LangAdapter.getString("October")),
-		NOVEMBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "November") : LangAdapter.getString("November")),
-		DECEMBER(!loadMonthFromLang ? ini.getString(SnakeGame.loggerIniPath, "December") : LangAdapter.getString("December"));
+		JANUARY(!loadMonthFromLang ? ini.getString("January") : LangAdapter.getString("January")),
+		FEBRUARY(!loadMonthFromLang ? ini.getString("February") : LangAdapter.getString("February")),
+		MARCH(!loadMonthFromLang ? ini.getString("March") : LangAdapter.getString("March")),
+		APRIL(!loadMonthFromLang ? ini.getString("April") : LangAdapter.getString("April")),
+		MAY(!loadMonthFromLang ? ini.getString("May") : LangAdapter.getString("May")),
+		JUNE(!loadMonthFromLang ? ini.getString("June") : LangAdapter.getString("June")),
+		JULY(!loadMonthFromLang ? ini.getString("July") : LangAdapter.getString("July")),
+		AUGUST(!loadMonthFromLang ? ini.getString("August") : LangAdapter.getString("August")),
+		SEPTEMBER(!loadMonthFromLang ? ini.getString("September") : LangAdapter.getString("September")),
+		OCTOBER(!loadMonthFromLang ? ini.getString("October") : LangAdapter.getString("October")),
+		NOVEMBER(!loadMonthFromLang ? ini.getString("November") : LangAdapter.getString("November")),
+		DECEMBER(!loadMonthFromLang ? ini.getString("December") : LangAdapter.getString("December"));
 
 		private final String monthShortForm;
 
@@ -259,7 +264,7 @@ public class Logger {
 		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
 		String second = second_i < 10 ? "0" + second_i : ""+second_i;
 
-		switch(ini.getString(SnakeGame.loggerIniPath, "time_format")) {
+		switch(ini.getString("time_format")) {
 		case "dd/m/yyyy-24hh:mm:ss":
 			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
 		case "dd/m/yyyy-hh:mm:ss":

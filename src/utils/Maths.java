@@ -1,4 +1,4 @@
-package snake;
+package utils;
 
 public class Maths {
 	public static double format(String s) {

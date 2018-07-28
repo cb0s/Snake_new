@@ -1,4 +1,4 @@
-package snake.io;
+package utils.io;
 
 import java.io.BufferedWriter;
 import java.io.File;

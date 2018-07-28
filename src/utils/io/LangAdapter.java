@@ -1,4 +1,4 @@
-package snake.io;
+package utils.io;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 /**
  * 	@author Cedric	
  *	@version 1.0
- *	@category io
+ *	@category util
  */
 
 public class LangAdapter {
@@ -22,7 +22,7 @@ public class LangAdapter {
 	private final static Locale locale;
 	
 	static {
-		locale = new Locale(ConfigAdapter.getConfigString("language"), ConfigAdapter.getConfigString("country"));
+		locale = new Locale(ConfigAdapter.getDefaultConfig().getConfigString("language"), ConfigAdapter.getDefaultConfig().getConfigString("country"));
 		try {
 			if (Installer.isInstalled())
 				resource = new PropertyResourceBundle(new FileInputStream(new File(path + "_" + locale.getLanguage() + "_" + locale.getCountry().toUpperCase() + ".lang")));

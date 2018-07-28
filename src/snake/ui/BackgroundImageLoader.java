@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import snake.io.ImageLoader;
+import utils.io.ImageLoader;
 
 /**	
  * @author Cedric

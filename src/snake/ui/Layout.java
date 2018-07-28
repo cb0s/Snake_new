@@ -8,6 +8,8 @@ import java.util.LinkedList;
 
 import javax.swing.JComponent;
 
+import utils.ui.Button;
+
 /**
  * 
  * @author Cedric

@@ -5,9 +5,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import snake.io.Logger;
-import snake.ui.Button;
-import snake.ui.Button.buttonStates;
+import utils.io.Logger;
+import utils.ui.Button;
+import utils.ui.Button.buttonStates;
 import snake.ui.WindowAdapter;
 
 public class MouseListener implements java.awt.event.MouseMotionListener, java.awt.event.MouseListener  {

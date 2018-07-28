@@ -2,7 +2,7 @@ package snake;
 
 import java.awt.Image;
 
-import snake.io.ImageLoader;
+import utils.io.ImageLoader;
 
 public class FruitLoader {
 	

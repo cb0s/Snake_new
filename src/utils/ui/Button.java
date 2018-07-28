@@ -1,4 +1,4 @@
-package snake.ui;
+package utils.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,12 +16,12 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import snake.Maths;
 import snake.SnakeGame;
-import snake.io.ImageLoader;
-import snake.io.IniAdapter;
-import snake.io.LangAdapter;
 import snake.ui.listeners.MouseListener;
+import utils.Maths;
+import utils.io.ImageLoader;
+import utils.io.IniAdapter;
+import utils.io.LangAdapter;
 
 
 /**
@@ -71,32 +71,32 @@ public class Button extends JComponent {
 	
 	static {
 		lastId=-1;
-		ini = new IniAdapter();
-		default_borderW = (int) Maths.format(ini.getString(SnakeGame.buttonIniPath, "default_borderW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width));
-		default_borderH = (int) Maths.format(ini.getString(SnakeGame.buttonIniPath, "default_borderH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height));
-		default_fReleasedC = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_fReleasedC"), 16));
-		default_fFocussedC = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_fFocussedC"), 16));
-		default_fPressedC = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_fPressedC"), 16));
-		default_bReleasedC = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_bReleasedC"), 16));
-		default_bFocussedC = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_bFocussedC"), 16));
-		default_bPressedC = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_bPressedC"), 16));
-		default_fontColorF = new Color(Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_fontColorF"), 16));
-		String l_font_name = ini.getString(SnakeGame.buttonIniPath, "default_fontName");
-		int l_font_style = Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "default_fontStyle").replaceAll("NONE", ""+Font.PLAIN).replaceAll("italic/bold", ""+Font.ITALIC+Font.BOLD).replaceAll("italic", ""+Font.BOLD).replaceAll("bold", ""+Font.BOLD));
-		int l_font_size = (int) Maths.format(ini.getString(SnakeGame.buttonIniPath, "default_fontSize").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().getWidth()));
-		minimumFontSize = Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "minimumFontSize"));
-		minimumBorderW = Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "minimumBorderW"));
-		minimumBorderH = Integer.parseInt(ini.getString(SnakeGame.buttonIniPath, "minimumBorderH"));
-		minTextMarginW = (int) Maths.format(ini.getString(SnakeGame.buttonIniPath, "minimumTextMarginW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().getWidth()));
-		minTextMarginH = (int) Maths.format(ini.getString(SnakeGame.buttonIniPath, "minimumTextMarginH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
+		ini = new IniAdapter(SnakeGame.buttonIniPath);
+		default_borderW = (int) Maths.format(ini.getString("default_borderW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width));
+		default_borderH = (int) Maths.format(ini.getString("default_borderH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height));
+		default_fReleasedC = new Color(Integer.parseInt(ini.getString("default_fReleasedC"), 16));
+		default_fFocussedC = new Color(Integer.parseInt(ini.getString("default_fFocussedC"), 16));
+		default_fPressedC = new Color(Integer.parseInt(ini.getString("default_fPressedC"), 16));
+		default_bReleasedC = new Color(Integer.parseInt(ini.getString("default_bReleasedC"), 16));
+		default_bFocussedC = new Color(Integer.parseInt(ini.getString("default_bFocussedC"), 16));
+		default_bPressedC = new Color(Integer.parseInt(ini.getString("default_bPressedC"), 16));
+		default_fontColorF = new Color(Integer.parseInt(ini.getString("default_fontColorF"), 16));
+		String l_font_name = ini.getString("default_fontName");
+		int l_font_style = Integer.parseInt(ini.getString("default_fontStyle").replaceAll("NONE", ""+Font.PLAIN).replaceAll("italic/bold", ""+Font.ITALIC+Font.BOLD).replaceAll("italic", ""+Font.BOLD).replaceAll("bold", ""+Font.BOLD));
+		int l_font_size = (int) Maths.format(ini.getString("default_fontSize").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().getWidth()));
+		minimumFontSize = Integer.parseInt(ini.getString("minimumFontSize"));
+		minimumBorderW = Integer.parseInt(ini.getString("minimumBorderW"));
+		minimumBorderH = Integer.parseInt(ini.getString("minimumBorderH"));
+		minTextMarginW = (int) Maths.format(ini.getString("minimumTextMarginW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().getWidth()));
+		minTextMarginH = (int) Maths.format(ini.getString("minimumTextMarginH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
 		l_font_size = l_font_size < minimumFontSize ? minimumFontSize : l_font_size;
 		default_font = new Font(l_font_name, l_font_style, l_font_size);
 		default_borderW = default_borderW < minimumBorderW ? minimumBorderW : default_borderW;
 		default_borderH = default_borderH < minimumBorderH ? minimumBorderH : default_borderH;
-		if (Boolean.parseBoolean(ini.getString(SnakeGame.buttonIniPath, "sameBorder"))) {
+		if (Boolean.parseBoolean(ini.getString("sameBorder"))) {
 			if (default_borderW != default_borderH) default_borderW = default_borderH;
 		}
-		if (Boolean.parseBoolean(ini.getString(SnakeGame.buttonIniPath, "sameMinimumTextMargin"))) {
+		if (Boolean.parseBoolean(ini.getString("sameMinimumTextMargin"))) {
 			if (minTextMarginW != minTextMarginH) minTextMarginW = minTextMarginH;
 		}
 	}
@@ -139,44 +139,44 @@ public class Button extends JComponent {
 	 *  @return returns a button loaded from the ini and the component_name
 	 */
 	public static Button loadButtonFromIni(String iniPath, String component_name) {
-		IniAdapter ini = new IniAdapter();
+		IniAdapter ini = new IniAdapter(iniPath);
 		String text;
 		Button b = new Button((text=LangAdapter.getString(component_name)) != null ? text : "");
 		try {
-			String style = ini.getString(iniPath, component_name+"_fontStyle", true);
-			b.setFont(new Font(ini.getString(iniPath, component_name+"_fontName", true), style.equals("PLAIN") ? Font.PLAIN : style.equals("BOLD") ? Font.BOLD : style.equals("ITALIC") ? Font.ITALIC : style.equals("BOLD+ITALIC") ? Font.ITALIC+Font.BOLD : Font.PLAIN, (int) Maths.format(ini.getString(iniPath, component_name+"_fontSize", true).replace("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height))));
+			String style = ini.getString(component_name+"_fontStyle");
+			b.setFont(new Font(ini.getString(component_name+"_fontName"), style.equals("PLAIN") ? Font.PLAIN : style.equals("BOLD") ? Font.BOLD : style.equals("ITALIC") ? Font.ITALIC : style.equals("BOLD+ITALIC") ? Font.ITALIC+Font.BOLD : Font.PLAIN, (int) Maths.format(ini.getString(component_name+"_fontSize").replace("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height))));
 		} catch(Exception e) { b.setFont(default_font); }
 		try {
-			b.setFontColorF(new Color(Integer.parseInt(ini.getString(iniPath, component_name+"_fontColor", true))));
+			b.setFontColorF(new Color(Integer.parseInt(ini.getString(component_name+"_fontColor"))));
 		} catch(Exception e) { b.setFontColorF(default_fontColorF); }
 		try {
-			if(Boolean.parseBoolean(ini.getString(iniPath, component_name+"_border"))) b.setBorderWH((int) Maths.format(ini.getString(iniPath, component_name+"_borderW").replaceAll("%default%", ""+b.getBorderW()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(ini.getString(iniPath, component_name+"_borderH").replaceAll("%default%", ""+b.getBorderH()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
+			if(Boolean.parseBoolean(ini.getString(component_name+"_border"))) b.setBorderWH((int) Maths.format(ini.getString(component_name+"_borderW").replaceAll("%default%", ""+b.getBorderW()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(ini.getString(component_name+"_borderH").replaceAll("%default%", ""+b.getBorderH()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
 			else b.setBorderWH(0, 0);
 		} catch(Exception e) {b.setBorderWH(default_borderW, default_borderH); }
 		Dimension bMinSize = null;
 		Dimension bMaxSize = null;
 		Dimension bPreferredSize = null;
 		String s = null;
-		if (Boolean.parseBoolean((s = ini.getString(iniPath, component_name+"_img", true)) != null ? s : "false")) {
-			b.setBackgroundToImage(new Image[] {ImageLoader.getImage(ini.getString(iniPath, component_name)), ImageLoader.getImage(ini.getString(iniPath, component_name+"F")), ImageLoader.getImage(ini.getString(iniPath, component_name+"P"))});
-			bMinSize = new Dimension((int) Maths.format(ini.getString(iniPath, component_name+"_minW").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getWidth())), (int) Maths.format(ini.getString(iniPath, component_name+"_minH").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getHeight())));
-			bMaxSize = new Dimension((int) Maths.format(ini.getString(iniPath, component_name+"_maxW").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getWidth())), (int) Maths.format(ini.getString(iniPath, component_name+"_maxH").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getHeight())));
+		if (Boolean.parseBoolean((s = ini.getString(component_name+"_img")) != null ? s : "false")) {
+			b.setBackgroundToImage(new Image[] {ImageLoader.getImage(ini.getString(component_name)), ImageLoader.getImage(ini.getString(component_name+"F")), ImageLoader.getImage(ini.getString(component_name+"P"))});
+			bMinSize = new Dimension((int) Maths.format(ini.getString(component_name+"_minW").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getWidth())), (int) Maths.format(ini.getString(component_name+"_minH").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getHeight())));
+			bMaxSize = new Dimension((int) Maths.format(ini.getString(component_name+"_maxW").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getWidth())), (int) Maths.format(ini.getString(component_name+"_maxH").replaceAll("%resolution%", ""+ImageLoader.toBufferedImage(b.getBackgroundImage()[0]).getHeight())));
 		} else {
 			try {
 				// TODO: Make this line working --> rewrite rendering
-				b.setBackground(new Color(Integer.parseInt(ini.getString(iniPath, component_name+"_backgroundColor", true))));
+				b.setBackground(new Color(Integer.parseInt(ini.getString(component_name+"_backgroundColor"))));
 			} catch(Exception e) {}
-			bMinSize = new Dimension((int) Maths.format(ini.getString(iniPath, component_name+"_minW").replaceAll("%resolution%", ""+(((int)b.getFont().getStringBounds(b.getLabel(), ((Graphics2D) b.getGraphics()).getFontRenderContext()).getWidth())/2+minTextMarginW))), (int) Maths.format(ini.getString(iniPath, component_name+"_minH").replaceAll("%resolution%", ""+((int)((b.getFont().getSize())/2+(1.0/4)*b.getFont().getSize()))+minTextMarginH)));
-			bMaxSize = new Dimension((int) Maths.format(ini.getString(iniPath, component_name+"_maxW").replaceAll("INFINITE", ""+Integer.MAX_VALUE)), (int)Maths.format(ini.getString(iniPath, component_name+"_maxH").replaceAll("INFINITE", ""+Integer.MAX_VALUE)));
+			bMinSize = new Dimension((int) Maths.format(ini.getString(component_name+"_minW").replaceAll("%resolution%", ""+(((int)b.getFont().getStringBounds(b.getLabel(), ((Graphics2D) b.getGraphics()).getFontRenderContext()).getWidth())/2+minTextMarginW))), (int) Maths.format(ini.getString(component_name+"_minH").replaceAll("%resolution%", ""+((int)((b.getFont().getSize())/2+(1.0/4)*b.getFont().getSize()))+minTextMarginH)));
+			bMaxSize = new Dimension((int) Maths.format(ini.getString(component_name+"_maxW").replaceAll("INFINITE", ""+Integer.MAX_VALUE)), (int)Maths.format(ini.getString(component_name+"_maxH").replaceAll("INFINITE", ""+Integer.MAX_VALUE)));
 		}
 		b.setMinimumSize(bMinSize);
 		b.setMaximumSize(bMaxSize);
-		bPreferredSize = new Dimension((int) Maths.format(ini.getString(iniPath, component_name+"_preferredW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(ini.getString(iniPath, component_name+"_preferredH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
+		bPreferredSize = new Dimension((int) Maths.format(ini.getString(component_name+"_preferredW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(ini.getString(component_name+"_preferredH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
 		bPreferredSize = bPreferredSize.getWidth() > bMinSize.getWidth() && bPreferredSize.getHeight() > bMinSize.getHeight() ? (bPreferredSize.getWidth() < bMaxSize.getWidth() && bPreferredSize.getHeight() < bMaxSize.getHeight() ? bPreferredSize : bMaxSize) : bMinSize;
 		b.setPreferredSize(bPreferredSize);
-		if (Boolean.parseBoolean(ini.getString(iniPath, component_name+"_sameRatio"))) b.setBorderWH(b.getBorderH(), b.getBorderH());
+		if (Boolean.parseBoolean(ini.getString(component_name+"_sameRatio"))) b.setBorderWH(b.getBorderH(), b.getBorderH());
 		b.setBounds(0, 0, b.getPreferredSize().width, b.getPreferredSize().height);	// You will have to set the location at the point you need it
-		b.setResizeable(Boolean.parseBoolean(ini.getString(iniPath, component_name+"_resizeable")));
+		b.setResizeable(Boolean.parseBoolean(ini.getString(component_name+"_resizeable")));
 		return b;
 	}
 	

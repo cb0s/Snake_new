@@ -3,8 +3,10 @@ package snake;
 import java.awt.Image;
 import java.util.Random;
 
-import snake.io.ImageLoader;
-import snake.io.IniAdapter;
+import utils.Maths;
+import utils.Stack;
+import utils.io.ImageLoader;
+import utils.io.IniAdapter;
 
 /**
  * @author Cedric
