@@ -20,7 +20,7 @@ public class PropertiesAdapter {
 	// ******************
 	// * Private fields *
 	// ******************
-	private Properties properties = null;
+	private Properties properties;
 	private String path;
 	
 	// ****************
@@ -30,7 +30,9 @@ public class PropertiesAdapter {
 	 * Gets a new Object of Property-Adapter.</br>
 	 * <i><b>Note:</b> Just other utils-Adapters can access this Constructor.</i>
 	 */
-	PropertiesAdapter() {}
+	PropertiesAdapter() {
+		properties = new Properties();
+	}
 	
 	/**
 	 * Get a new Object of Property-Adapter relating to a specified file.
@@ -40,7 +42,18 @@ public class PropertiesAdapter {
 	 * @throws IOException If an Error occurs while initializing either the Properties or the FileInputStream relating to it
 	 */
 	public PropertiesAdapter(File file) throws FileNotFoundException, IOException {
+		this();
 		updateProperties(new FileInputStream(file), file.getPath());
+	}
+	
+	// ***************************
+	// * Package Related Methods *
+	// ***************************
+	public boolean checkStackTrace() {
+		for (StackTraceElement s : Thread.currentThread().getStackTrace())
+			if (s.getClassName().contains("utils.io.Logger"))
+				return true;
+		return false;
 	}
 	
 	// ******************
@@ -53,7 +66,7 @@ public class PropertiesAdapter {
 	 * @return The value which is linked to the given key in the properties-File
 	 */
 	public String getProperty(String key) {
-		Logger.getDefaultLogger().logInfo("Trying to load " + key + " from " + path);
+		if (!checkStackTrace()) Logger.getDefaultLogger().logInfo("Trying to load " + key + " from " + path);
 		return properties.getProperty(key);
 	}
 	
@@ -64,7 +77,7 @@ public class PropertiesAdapter {
 	 * @param value the value which will be written into the properties-File
 	 */
 	public void setProperty(String key, String value) {
-		Logger.getDefaultLogger().logInfo("Trying to set " + key + " to " + value + " in " + path);
+		if (!checkStackTrace()) Logger.getDefaultLogger().logInfo("Trying to set " + key + " to " + value + " in " + path);
 		properties.setProperty(key, value);
 	}
 	
@@ -76,6 +89,7 @@ public class PropertiesAdapter {
 	 * @throws IOException If an Error occurs while initializing either the Properties or the FileInputStream relating to it
 	 */
 	public void updateProperties(InputStream inputStream, String path) throws IOException {
+		if (!checkStackTrace()) Logger.getDefaultLogger().logInfo("Updating Properties " + this.path + " to " + path);
 		this.path = path;
 		properties.load(inputStream);
 	}

@@ -15,12 +15,12 @@ import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
+// TODO: REWRITE INSTALLER! --> Add progress, add resume, ...
 /** 
  * 	@author Cedric	
  *	@version 1.0
  *	@category io
- **/
-
+ */
 public class Installer {
 	
 	private static int progress;
@@ -60,19 +60,18 @@ public class Installer {
 				ArrayList<String> files = new ArrayList<String>();
 				
 				try {
-					log(LoggingType.INFO + "Starting installation");
+					log(LoggingType.INFO + " Starting installation");
 					if(installed) {
-						log(LoggingType.WARNING + "Game is already installed!");
+						log(LoggingType.WARNING + " Game is already installed!");
 						if(!replace) {
 							progress = 100;
 							return;
 						}
-						log(LoggingType.WARNING + "Reinstalling...");
+						log(LoggingType.WARNING + " Reinstalling...");
 					}
 					
 					String jarPath = Installer.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceAll(File.pathSeparator, "/");
-					
-					log(LoggingType.INFO + "Loading installation script");	
+					log(LoggingType.INFO + " Loading installation script");	
 					InputStream script = Installer.class.getResourceAsStream("/data/installer.script");
 					String line = "";
 					while(script.available() > 0) {
@@ -86,7 +85,7 @@ public class Installer {
 						}
 					}
 					script.close();
-					log(LoggingType.INFO + "Script loaded. Installation will start now");
+					log(LoggingType.INFO + " Script loaded. Installation will start now");
 					
 					progress = 0;
 					
@@ -107,7 +106,7 @@ public class Installer {
 						if(fileName.endsWith("/")) {
 							f.mkdirs();
 							filesInstalled.add(f.getAbsolutePath());
-							log(LoggingType.INFO + f.getAbsolutePath() + " created");
+							log(LoggingType.INFO + " " + f.getAbsolutePath() + " created");
 							progress = (int) filesInstalled.size()/files.size()*100;
 							continue;
 						}
@@ -119,11 +118,11 @@ public class Installer {
 						}
 						in.close();
 						out.close();
-						log(LoggingType.INFO + f.getAbsolutePath() + " installed");
+						log(LoggingType.INFO + " " + f.getAbsolutePath() + " installed");
 						progress = (int) filesInstalled.size()/files.size()*100;
 					}
 					jar.close();
-					log(LoggingType.INFO + "Successfully installed. Restart the game now");
+					log(LoggingType.INFO + " Successfully installed. Restart the game now");
 					JOptionPane.showMessageDialog(null, "Successfully installed!\nRestart the game now to finish installation", "Installation completed", JOptionPane.INFORMATION_MESSAGE);
 					PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(new File("data/installed.0"))));
 					w.println("Successfully installed, " + Logger.getTime());
@@ -133,9 +132,9 @@ public class Installer {
 						File delFile = new File(filesInstalled.get(i));
 						if (delFile.exists()) delFile.delete();
 						filesInstalled.remove(i);
-						log(LoggingType.WARNING + delFile.getAbsolutePath() + " deleted");
+						log(LoggingType.WARNING + " " + delFile.getAbsolutePath() + " deleted");
 					}
-					log(LoggingType.ERROR + "Installing failed! Exiting installer...");
+					log(LoggingType.ERROR + " Installing failed! Exiting installer...");
 					String error = Logger.getDefaultLogger().logException(e);
 					installationProcess.add("Error: " + error);
 					JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_failed").replace("%error%", error), LangAdapter.getString("installer_title_F"), JOptionPane.ERROR_MESSAGE);
@@ -158,6 +157,6 @@ public class Installer {
 				}
 			}
 		});
-		install.start();
+		install.run();			// TODO: Make an Installer-UI --> show Progress!
 	}
 }

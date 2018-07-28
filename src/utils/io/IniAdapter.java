@@ -41,7 +41,9 @@ public class IniAdapter {
 	 * @return The value which is linked to the given key in the properties-File
 	 */
 	public String getString(String key) {
-		return properties.getProperty(key);
+		String s = properties.getProperty(key);
+		if (s != null) while (s.contains("%lang%")) s = s.substring(0, s.indexOf("%lang%")) + LangAdapter.getString(s.substring(s.indexOf("%lang%")+6, s.indexOf('%', s.indexOf("%lang%")+7))) + s.substring(s.indexOf('%', s.indexOf("%lang%")+7)+1);
+		return s;
 	}
 	
 	/**
@@ -59,8 +61,11 @@ public class IniAdapter {
 				properties.updateProperties(this.getClass().getResourceAsStream("/" + path), path);
 			return true;
 		} catch (IOException e) {
-			Logger.getDefaultLogger().logError("Loading " + path + " failed!");
-			String error = Logger.getDefaultLogger().logException(e);
+			String error = e.getMessage();
+			if (!properties.checkStackTrace()) {
+				Logger.getDefaultLogger().logError("Loading " + path + " failed!");
+				error = Logger.getDefaultLogger().logException(e);
+			}
 			JOptionPane.showMessageDialog(null, "Error while loading " + path + "!\nTrying to continue!\n\nError:\n" + error, "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}

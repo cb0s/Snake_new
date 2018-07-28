@@ -55,10 +55,8 @@ public class ConfigAdapter {
 	 */
 	private boolean updateConfigPath() {
 		try {
-			if (Installer.isInstalled())
-				properties.updateProperties(new FileInputStream(new File(path)), path);
-			else
-				properties.updateProperties(ConfigAdapter.class.getResourceAsStream("/" + path), path);
+			if (Installer.isInstalled()) properties.updateProperties(new FileInputStream(new File(path)), path);
+			else properties.updateProperties(this.getClass().getResourceAsStream(path), path);
 			return true;
 		} catch (IOException e) {
 			Logger.getDefaultLogger().logError("Loading " + path + " failed!");
@@ -78,7 +76,9 @@ public class ConfigAdapter {
 	 * @return Value which is assigned to key
 	 */
 	public String getConfigString(String key) {
-		return properties.getProperty(key);
+		String s = properties.getProperty(key);
+		if (s != null) while (s.contains("%lang%")) s = s.substring(0, s.indexOf("%lang%")) + LangAdapter.getString(s.substring(s.indexOf("%lang%")+6, s.indexOf('%', s.indexOf("%lang%")+7))) + s.substring(s.indexOf('%', s.indexOf("%lang%")+7)+1);
+		return s;
 	}
 	
 	/**

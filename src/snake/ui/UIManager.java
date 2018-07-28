@@ -35,13 +35,13 @@ public class UIManager {
 	private UIManager() {}
 	
 	public static void init() {
-		backgroundImgMainMenu = ImageLoader.getImage(WindowAdapter.guiIniMainMenu.getString(SnakeGame.guiIniMainMenuPath, "backgroundImagePath"));
+		backgroundImgMainMenu = ImageLoader.getImage(WindowAdapter.guiIniMainMenu.getString("backgroundImagePath"));
 		
 		WindowAdapter.initMain();
 		WindowAdapter.mainAddWindowListener(new mainCloseAdapter());
 		WindowAdapter.mainAddMouseListener(new MouseListener());
 		WindowAdapter.mainAddMouseMotionListener(new MouseListener());
-		WindowAdapter.setMainIcon(ImageLoader.getImage(WindowAdapter.guiIni.getString(SnakeGame.iniPath, "icon_path")));
+		WindowAdapter.setMainIcon(ImageLoader.getImage(WindowAdapter.guiIni.getString("icon_path")));
 		mainLayout = new Layout(WindowAdapter.mainGetDimensions());
 		if (WindowAdapter.isMainFullscreen()) setUpFullscreenControl();
 		setMainMenu();
@@ -90,7 +90,7 @@ public class UIManager {
 		minimize.setLocation(WindowAdapter.mainGetDimensions().width-exit.getPreferredSize().width-maximize.getPreferredSize().width-minimize.getPreferredSize().width, 0);
 		minimize.setResizeable(false);
 		minimize.setBounds(minimize.getLocation().x, minimize.getLocation().y, minimize.getPreferredSize().width, minimize.getPreferredSize().height);
-		if(Boolean.parseBoolean(WindowAdapter.guiIni.getString(SnakeGame.iniPath, "min_button_border"))) minimize.setBorderWH((int) Maths.format(WindowAdapter.guiIni.getString(SnakeGame.iniPath, "min_button_borderW").replaceAll("%default%", ""+minimize.getBorderW()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(WindowAdapter.guiIni.getString(SnakeGame.iniPath, "min_button_borderH").replaceAll("%default%", ""+minimize.getBorderH()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
+		if(Boolean.parseBoolean(WindowAdapter.guiIni.getString("min_button_border"))) minimize.setBorderWH((int) Maths.format(WindowAdapter.guiIni.getString("min_button_borderW").replaceAll("%default%", ""+minimize.getBorderW()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(WindowAdapter.guiIni.getString("min_button_borderH").replaceAll("%default%", ""+minimize.getBorderH()).replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
 		else minimize.setBorderWH(0,0);
 		minimize.addActionListener(e -> {
 			WindowAdapter.mainMinimize();

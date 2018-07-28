@@ -35,19 +35,19 @@ public class Snake {
 	}
 	
 	private Snake(int x, int y) {
+		snakeIni = new IniAdapter(SnakeGame.snakeIniPath);
 		snakeParts = new Stack<>();
-		head = new SnakePart(ImageLoader.getImage(snakeIni.getString(SnakeGame.snakeIniPath, "head")));
-		tail = new SnakePart(ImageLoader.getImage(snakeIni.getString(SnakeGame.snakeIniPath, "tail")));
+		head = new SnakePart(ImageLoader.getImage(snakeIni.getString("head")));
+		tail = new SnakePart(ImageLoader.getImage(snakeIni.getString("tail")));
 		instance = this;
-		snakeIni = new IniAdapter();
-		size = (int) Maths.format(snakeIni.getString(SnakeGame.snakeIniPath, "defaultSize"));
+		size = (int) Maths.format(snakeIni.getString("defaultSize"));
 		for(int i = 0; i < size; i++)
 			grow();
 	}
 
 	// TODO: Don't instant grow but on next run -> otherwise tail maybe hits border although it should not!
 	private void grow() {
-		snakeParts.add(new SnakePart(ImageLoader.getImage(snakeIni.getString(SnakeGame.snakeIniPath, "defaultPart" + new Random().nextInt(Integer.parseInt(snakeIni.getString(SnakeGame.snakeIniPath, "differentParts"))) + ".png"))));
+		snakeParts.add(new SnakePart(ImageLoader.getImage(snakeIni.getString("defaultPart" + new Random().nextInt(Integer.parseInt(snakeIni.getString("differentParts"))) + ".png"))));
 	}
 	
 	public int getSize() {

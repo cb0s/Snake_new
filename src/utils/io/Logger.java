@@ -265,17 +265,17 @@ public class Logger {
 		String second = second_i < 10 ? "0" + second_i : ""+second_i;
 
 		switch(ini.getString("time_format")) {
-		case "dd/m/yyyy-24hh:mm:ss":
+		case "dd/mm/yyyy-24hh:mm:ss":
 			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/m/yyyy-hh:mm:ss":
+		case "dd/mm/yyyy-hh:mm:ss":
 			return day + "/" + month + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "m/dd/yyyy-hh:mm:ss":
+		case "mm/dd/yyyy-hh:mm:ss":
 			return month + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/m/dd-24hh:mm:ss":
+		case "yyyy/mm/dd-24hh:mm:ss":
 			return year + "/" + month + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/m/dd-hh:mm:ss":
+		case "yyyy/mm/dd-hh:mm:ss":
 			return year + "/" + month + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/m-hh:mm:ss":
+		case "yyyy/dd/mm-hh:mm:ss":
 			return year + "/" + day + "/" + month + "-" + hour + am_pm + ":" + minute + ":" + second;
 		case "dd/mmm/yyyy-24hh:mm:ss":
 			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour24 + ":" + minute + ":" + second;

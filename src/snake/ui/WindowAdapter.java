@@ -45,8 +45,8 @@ public class WindowAdapter {
 	static {
 		activeFrames = new HashSet<JFrame>();
 		device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		guiIni = new IniAdapter();
-		guiIniMainMenu = new IniAdapter();
+		guiIni = new IniAdapter(SnakeGame.iniPath);
+		guiIniMainMenu = new IniAdapter(SnakeGame.guiIniMainMenuPath);
 	}
 	
 	private static boolean fullscreen;
@@ -123,17 +123,17 @@ public class WindowAdapter {
 	 */
 	public static void initMain() {
 		Logger.getDefaultLogger().logInfo("Creating Main-Frame");
-		mainFrame = new JFrame(guiIniMainMenu.getString(SnakeGame.guiIniMainMenuPath, "title"), device.getDefaultConfiguration());
+		mainFrame = new JFrame(guiIniMainMenu.getString("title"), device.getDefaultConfiguration());
 		
 		Logger.getDefaultLogger().logInfo("Setting Main-Frame-Size");
-		if((fullscreen = Boolean.parseBoolean(guiIni.getString(SnakeGame.iniPath, "fullscreen")))) mainSetToFullScreen();
-		else mainFrame.setSize((int) Maths.format(guiIni.getString(SnakeGame.iniPath, "width").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(guiIni.getString(SnakeGame.iniPath, "height").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
-		if (Boolean.parseBoolean(guiIni.getString(SnakeGame.iniPath, "maximized"))) mainFrame.setExtendedState(mainFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		if((fullscreen = Boolean.parseBoolean(guiIni.getString("fullscreen")))) mainSetToFullScreen();
+		else mainFrame.setSize((int) Maths.format(guiIni.getString("width").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width)), (int) Maths.format(guiIni.getString("height").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height)));
+		if (Boolean.parseBoolean(guiIni.getString("maximized"))) mainFrame.setExtendedState(mainFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		
 		Logger.getDefaultLogger().logInfo("Positioning Main-Frame");
-		boolean center = Boolean.parseBoolean(guiIni.getString(SnakeGame.iniPath, "center"));
+		boolean center = Boolean.parseBoolean(guiIni.getString("center"));
 		if(center) mainFrame.setLocationRelativeTo(null);
-		else mainFrame.setLocation((int) Maths.format(guiIni.getString(SnakeGame.iniPath, "x")), (int) Maths.format(guiIni.getString(SnakeGame.iniPath, "y")));
+		else mainFrame.setLocation((int) Maths.format(guiIni.getString("x")), (int) Maths.format(guiIni.getString("y")));
 		mainFrame.setLayout(new BorderLayout());
 	}
 		

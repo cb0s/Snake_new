@@ -12,11 +12,15 @@ import javax.swing.JOptionPane;
 /**
  * 	@author Cedric	
  *	@version 1.0
- *	@category util
+ *	@category util</br></br>
+ *
+ *	Lets you load language Strings in your project by defining a locale.
  */
-
 public class LangAdapter {
 	
+	// ******************
+	// * Private fields *
+	// ******************
 	private static ResourceBundle resource;
 	private final static String path = "data/lang/snake";
 	private final static Locale locale;

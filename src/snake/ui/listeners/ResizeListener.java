@@ -15,11 +15,11 @@ public class ResizeListener {
 	private static IniAdapter guiIni;
 	
 	static {
-		guiIni = new IniAdapter();
+		guiIni = new IniAdapter(SnakeGame.iniPath);
 	}
 	
 	public ResizeListener(JFrame frame) {
-		final int tick = Integer.parseInt(guiIni.getString(SnakeGame.iniPath, "own_listener_tick"));
+		final int tick = Integer.parseInt(guiIni.getString("own_listener_tick"));
 		Thread t = new Thread(new Runnable() {
 			Dimension size;
 			@Override
