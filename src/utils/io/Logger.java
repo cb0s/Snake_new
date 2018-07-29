@@ -13,15 +13,23 @@ import snake.SnakeGame;
 /**
  * @author Leo, Cedric
  * @version 2.0
- * @category io
+ * @category util</br></br>
+ * 
+ * Lets you log all the stuff you want to log with a time-stamp and a category. At the moment INFO, WARNING and ERROR exist.</br>
+ * On top of that you can log Exceptions.</br></br>
+ * 
+ * <b>Use:</b> If you want to use the default-Logger do <i>utils.io.Logger.getDefaultLogger().log[Info/Warning/Exception/Error](String msg);</i></br>
+ * Otherwise create a new instance and use this instance like the defaultLogger.
+ * 
  */
 public class Logger {
 
-	// ******************************
-	// Constants
-	// ******************************
+	// *************
+	// * Constants *
+	// *************
 	public final static IniAdapter ini;
 	private static final boolean loadMonthFromLang;
+	private static final String timeFormat;
 	private static final String INFO_PREFIX = "[Info]";
 	private static final String WARNING_PREFIX = "[Warning]";
 	private static final String ERROR_PREFIX = "[Error]";
@@ -29,6 +37,7 @@ public class Logger {
 	static {
 		ini = new IniAdapter(SnakeGame.loggerIniPath);
 		loadMonthFromLang = Boolean.parseBoolean(ini.getString("loadFromLangFiles"));
+		timeFormat = ini.getString("time_format");
 		
 		boolean fileLogging = false;
 		
@@ -75,9 +84,9 @@ public class Logger {
 	
 	
 	
-	// ******************************
-	// Fields
-	// ******************************
+	// **********
+	// * Fields *
+	// **********
 	private static Logger defaultLogger;
 	
 	private LinkedBlockingQueue<String> messages;
@@ -86,9 +95,9 @@ public class Logger {
 	
 	
 
-	// ******************************
-	// Constructors
-	// ******************************
+	// ****************
+	// * Constructors *
+	// ****************
 	/**
 	 * Creates a new logger.
 	 */
@@ -161,9 +170,9 @@ public class Logger {
 	
 	
 
-	// ******************************
-	// Private methods
-	// ******************************
+	// *******************
+	// * Private methods *
+	// *******************
 	
 	private enum Months {
 		JANUARY(!loadMonthFromLang ? ini.getString("January") : LangAdapter.getString("January")),
@@ -238,9 +247,9 @@ public class Logger {
 	
 	
 	
-	// ******************************
-	// Public methods
-	// ******************************
+	// ******************
+	// * Public methods *
+	// ******************
 	/**
 	 * Returns the time at the moment, it gets called
 	 * 
@@ -263,8 +272,8 @@ public class Logger {
 		String hour24 = hour24_i < 10 ? "0" + hour24_i : ""+hour24_i;
 		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
 		String second = second_i < 10 ? "0" + second_i : ""+second_i;
-
-		switch(ini.getString("time_format")) {
+		
+		switch(timeFormat) {
 		case "dd/mm/yyyy-24hh:mm:ss":
 			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
 		case "dd/mm/yyyy-hh:mm:ss":
@@ -375,65 +384,4 @@ public class Logger {
 		return logFileWriter != null;
 	}
 
-	
-	
-
-
-
-
-
-
-	/*
-	public void log_old(String s) {
-		Runnable r = new Runnable() {
-			@Override
-			public void run () {
-				String date = getTime();
-				String msg = "[" + date + "] " + s;
-				System.out.println(msg);
-
-				if(fileLogging) {
-					try {
-						boolean breakup = false;
-						switch (ini.getString(SnakeGame.loggerIniPath, "timeAfterSplit")) {
-						case "none":
-							if (logger == null) {
-								logger = new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake.log");
-								breakup = true;
-							}
-							break;
-						case "g":
-							if(logger == null) {
-								logger = new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake_game_" + getTime() + ".log");
-							}
-							break;
-						default:
-							if(logger == null || start+Integer.parseInt(ini.getString(SnakeGame.loggerIniPath, "timeAfterSplit"))*60000 < System.currentTimeMillis()) {
-								logger = new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "") + "snake_" + getTime() + ".log");
-								start = System.currentTimeMillis();
-							}
-						}
-						if(!logger.exists()) {
-							new File(ini.getString(SnakeGame.loggerIniPath, "path").replace("*", "")).mkdirs();
-							logger.createNewFile();
-							log(LoggingType.INFO.type + "Created new Logging File (" + logger.getAbsolutePath() + ")");
-						}
-						PrintWriter w = new PrintWriter(new FileWriter(logger, true));
-						if(breakup) w.write("\n----------------------------new-Session-started----------------------------\n");
-						w.write(msg + '\n');
-						w.flush();
-						w.close();
-					} catch(Exception exception) {
-						fileLogging = false;
-						exception.printStackTrace();
-						log(LoggingType.ERROR.type + exception.toString());
-						fileLogging = true;
-					}
-				}
-			}
-		};
-		if (startNewThread) new Thread (r).start();
-		else r.run();
-	}
-	*/
 }

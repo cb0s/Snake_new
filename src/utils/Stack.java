@@ -3,7 +3,8 @@ package utils;
 /**
  * @author Cedric
  * @version 1.0
- * @param <E>
+ * @param <E> The Datatype of the Element you want to store
+ * @category util
  */
 public class Stack<E> {
 	

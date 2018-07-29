@@ -19,7 +19,9 @@ import javax.swing.JOptionPane;
 /** 
  * 	@author Cedric	
  *	@version 1.0
- *	@category io
+ *	@category util</br></br>
+ *
+ *	Let's you install your software by specifying a installer-script.
  */
 public class Installer {
 	
@@ -149,7 +151,7 @@ public class Installer {
 						}
 						w.close();
 						Logger.getDefaultLogger().logInfo("Installation-process file successfully created");
-						JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_procF_s"), LangAdapter.getString("installer_title"), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_procF_s"), LangAdapter.getString("installer_title"), JOptionPane.INFORMATION_MESSAGE);
 					} catch(Exception e) {
 						Logger.getDefaultLogger().logError("Couldn't create installation-process file");
 						JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_procF_f"), LangAdapter.getString("installer_title_F"), JOptionPane.ERROR_MESSAGE);

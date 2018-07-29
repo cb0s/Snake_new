@@ -1,5 +1,10 @@
 package utils;
 
+/**
+ * @author Cedric
+ * @version 1.0
+ * @category util
+ */
 public class Maths {
 	public static double format(String s) {
 		s = s.replace(" ", "");

@@ -70,7 +70,7 @@ public class ConfigAdapter {
 	// * Public Methods *
 	// ******************
 	/**
-	 * Returns a value assigned to the key in the config-File.
+	 * Returns a value assigned to the key in the Config-File.
 	 * 
 	 * @param key is to specify which value should be loaded
 	 * @return Value which is assigned to key
@@ -82,7 +82,7 @@ public class ConfigAdapter {
 	}
 	
 	/**
-	 * Sets the value assigned to key of the config-File to a new value.
+	 * Sets the value assigned to key of the Config-File to a new value.
 	 * 
 	 * @param key is to specify which value should be updated
 	 * @param value new value for the assigned value linked to the key
@@ -94,7 +94,7 @@ public class ConfigAdapter {
 	/**
 	 * Updates the location of the Config-File.</br>
 	 * 
-	 * @param path the location of the config-File
+	 * @param path the location of the Config-File
 	 */
 	public boolean updatePath(String path) {
 		this.path = path;
@@ -105,7 +105,7 @@ public class ConfigAdapter {
 	 * Updates the location of the defaultConfig-File if you don't want to use the default-location.</br>
 	 * <b>default-path:</b> <i>data/config.cfg</i>
 	 * 
-	 * @param path the location of the config-File
+	 * @param path the location of the Config-File
 	 */
 	public static boolean updateDefaultPath(String path) {
 		defaultConfig.updatePath(path);
@@ -113,8 +113,9 @@ public class ConfigAdapter {
 	}
 	
 	/**
+	 * Returns the default Config-Adapter
 	 * 
-	 * @return
+	 * @return the default ConfigAdapter
 	 */
 	public static ConfigAdapter getDefaultConfig() {
 		return defaultConfig;

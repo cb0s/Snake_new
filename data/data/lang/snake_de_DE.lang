@@ -16,4 +16,4 @@ installer_title_F=Installer-Fehler
 installer_start-question=Sie haben Snake noch nicht installiert.\nWenn Sie jedoch alle Funktionen freischalten wollen, müssen Sie das Programm dafür installieren.\n\nMöchten Sie Snake jetzt installieren ?\n\n\nWenn Sie Snake schon installiert haben, können Sie ihre Installation überprüfen, indem Sie \"Ja\" klicken.\n\n\n\nInfo: Installationsverzeichnis: %installation_dir%\n\n
 installer_failed=Installation fehlgeschlagen!\n\nFehler:\n%error%\n\n
 installer_procF_s=Installer-Process-File erfolgreich erstellt!\n\nInstallation abgeschlossen.\n\n
-installer_procF_s=Installer-Process-File konnte nicht erstellt werden!\n\nInstallation abgeschlossen.\n\n
+installer_procF_f=Installer-Process-File konnte nicht erstellt werden!\n\nInstallation abgeschlossen.\n\n
