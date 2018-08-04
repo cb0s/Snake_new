@@ -25,11 +25,9 @@ public class ConfigAdapter {
 	
 	static {
 		// Sets default values - They can be updated later with own ones
-		String defaultPath;
-		if (Installer.isInstalled())
-			defaultPath = "data/config.cfg";
-		else
-			defaultPath = "/data/config.cfg";
+		String defaultPath = PathsLoader.getSavedPath("config_inst");;
+		if (!Installer.isInstalled())
+			defaultPath += '/';
 		
 		defaultConfig = new ConfigAdapter(defaultPath);
 	}

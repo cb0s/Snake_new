@@ -16,8 +16,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import snake.SnakeGame;
-import snake.ui.listeners.MouseListener;
+import snake.oldUI.MouseListener;
 import utils.Maths;
 import utils.io.ImageLoader;
 import utils.io.IniAdapter;
@@ -71,7 +70,8 @@ public class Button extends JComponent {
 	
 	static {
 		lastId=-1;
-		ini = new IniAdapter(SnakeGame.buttonIniPath);
+		// TODO: Fix this!
+//		ini = new IniAdapter(SnakeGame.buttonIniPath);
 		default_borderW = (int) Maths.format(ini.getString("default_borderW").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().width));
 		default_borderH = (int) Maths.format(ini.getString("default_borderH").replaceAll("%screensize%", ""+Toolkit.getDefaultToolkit().getScreenSize().height));
 		default_fReleasedC = new Color(Integer.parseInt(ini.getString("default_fReleasedC"), 16));

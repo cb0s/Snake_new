@@ -22,6 +22,7 @@ public class LangAdapter {
 	// * Private fields *
 	// ******************
 	private static ResourceBundle resource;
+	// TODO!
 	private final static String path = "data/lang/snake";
 	private final static Locale locale;
 	

@@ -62,7 +62,7 @@ public class IniAdapter {
 			return true;
 		} catch (IOException e) {
 			String error = e.getMessage();
-			if (!properties.checkStackTrace()) {
+			if (Logger.isInitialized()) {
 				Logger.getDefaultLogger().logError("Loading " + path + " failed!");
 				error = Logger.getDefaultLogger().logException(e);
 			}

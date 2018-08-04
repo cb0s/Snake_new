@@ -46,16 +46,6 @@ public class PropertiesAdapter {
 		updateProperties(new FileInputStream(file), file.getPath());
 	}
 	
-	// ***************************
-	// * Package Related Methods *
-	// ***************************
-	public boolean checkStackTrace() {
-		for (StackTraceElement s : Thread.currentThread().getStackTrace())
-			if (s.getClassName().contains("utils.io.Logger"))
-				return true;
-		return false;
-	}
-	
 	// ******************
 	// * Public Methods *
 	// ******************
@@ -66,7 +56,7 @@ public class PropertiesAdapter {
 	 * @return The value which is linked to the given key in the properties-File
 	 */
 	public String getProperty(String key) {
-		if (!checkStackTrace()) Logger.getDefaultLogger().logInfo("Trying to load " + key + " from " + path);
+		if (Logger.isInitialized()) Logger.getDefaultLogger().logInfo("Trying to load " + key + " from " + path);
 		return properties.getProperty(key);
 	}
 	
@@ -77,7 +67,7 @@ public class PropertiesAdapter {
 	 * @param value the value which will be written into the properties-File
 	 */
 	public void setProperty(String key, String value) {
-		if (!checkStackTrace()) Logger.getDefaultLogger().logInfo("Trying to set " + key + " to " + value + " in " + path);
+		if (Logger.isInitialized()) Logger.getDefaultLogger().logInfo("Trying to set " + key + " to " + value + " in " + path);
 		properties.setProperty(key, value);
 	}
 	
@@ -89,7 +79,7 @@ public class PropertiesAdapter {
 	 * @throws IOException If an Error occurs while initializing either the Properties or the FileInputStream relating to it
 	 */
 	public void updateProperties(InputStream inputStream, String path) throws IOException {
-		if (!checkStackTrace()) Logger.getDefaultLogger().logInfo("Updating Properties " + this.path + " to " + path);
+		if (Logger.isInitialized()) Logger.getDefaultLogger().logInfo("Updating Properties " + this.path + " to " + path);
 		this.path = path;
 		properties.load(inputStream);
 	}

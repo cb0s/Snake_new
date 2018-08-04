@@ -1,0 +1,9 @@
+# Config #
+config = data/config.cfg
+
+# Logger #
+logger_ini = data/ini/logger.ini
+
+# GUI #
+main_menu_ini = data/ini/gui/gui_main_menu.ini
+gui_ini = data/ini/gui/gui.ini

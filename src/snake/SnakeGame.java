@@ -1,32 +1,98 @@
 package snake;
 
-import java.awt.HeadlessException;
-import java.io.File;
-import java.net.URISyntaxException;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import snake.ui.GameClock;
-import snake.ui.UIManager;
-import snake.ui.WindowAdapter;
-import utils.io.Installer;
-import utils.io.LangAdapter;
+import snake.ui.MainMenuState;
+import utils.Maths;
+import utils.io.IniAdapter;
 import utils.io.Logger;
+import utils.io.PathsLoader;
 
 /** 
  * 	@author Cedric	
  *	@version 1.0
- *	@category main
+ *	@category main</br></br>
  *
- *	NOTE: 	The game supports multiple languages which can be loaded from the UI.
+ *	<b>NOTE:</b> 	The game supports multiple languages which can be loaded from the UI.
  *			Also there is an integrated Logger but it just comes in English. If anyone
  *			want to implement it feel free.
  **/
 
 public class SnakeGame {
+
+	private static Game game;
 	
+	public static IniAdapter guiIni;
+	
+	private static void initGraphics() {
+		// Trying to enable OpenGL
+		try {
+			Logger.getDefaultLogger().logInfo("Activating OpenGL");
+			System.setProperty("sun.java2d.opengl", "true");
+		} catch (Exception e) {
+			Logger.getDefaultLogger().logError("Activating OpenGL failed!");
+			Logger.getDefaultLogger().logError(e.getMessage());
+			JOptionPane.showMessageDialog(null, "Activating OpenGL failed!\nExiting");
+			System.exit(1);
+		}
+		if(!System.getProperty("sun.java2d.opengl").equals("true")) 
+			Logger.getDefaultLogger().logWarning("OpenGL is not activated now");
+		else 
+			Logger.getDefaultLogger().logInfo("OpenGL successfully loaded");
+		
+		// Setting LookAndFeel
+		try {
+			Logger.getDefaultLogger().logInfo("Enabling SystemLookAndFeel");
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+			Logger.getDefaultLogger().logInfo("SystemLookAndFeel successfully loaded");
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			Logger.getDefaultLogger().logError("Setting UILookAndFeel to SystemLookAndFeel failed!");
+			Logger.getDefaultLogger().logException(e);
+			Logger.getDefaultLogger().logWarning("The UI may be a bit different to what you are used to");
+			JOptionPane.showMessageDialog(null, "The UI may appear a bit different due to loading errors.", "Info", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	/**
+	 * This method starts the program with the arguments args.
+	 * 
+	 * @param args Arguments when for starting program
+	 */
+	public static void main(String[] args) {
+		guiIni = new IniAdapter(PathsLoader.getSavedPath("gui_ini"));
+		initGraphics();
+		
+		game = new Game(MainMenuState.mainMenuIni.getString("title"), (int) Maths.format(guiIni.getString("width").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().width+"")), (int) Maths.format(guiIni.getString("height").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().height+"")), new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				game.stop();
+				System.exit(0);
+			}
+		});
+		game.getDisplay().center();
+		game.start();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* Old Code (!)
 	public final static String loggerIniPath;
 	public final static String iniPath;
 	public final static String guiIniMainMenuPath;
@@ -86,21 +152,21 @@ public class SnakeGame {
 			Logger.getDefaultLogger().logWarning("The UI may be a bit different to what you are used to");
 			JOptionPane.showMessageDialog(null, "The UI may appear a bit different due to loading errors", "Info", JOptionPane.INFORMATION_MESSAGE);
 		}
-	}
-
-	/**
-	 * @author Cedric
-	 * @param args
-	 * 
-	 * You can control Snake a bit from console. For example you can specify how your Logger works:
-	 * Use following Arguments to manually control Logger:
-	 *  -d: debug-Mode: Enabling Logger with File-Write-Permission if debugging is enabled in Config
-	 *  -dp: - if following arg = on: Enabling Logger and writing this permission also to the Config
-	 *  	 - if following arg = off: Disabling Loggger and disabling it also by Config (logging)
-	 *  -da: can enable (following arg = on) or disable (following arg = off) debugging by config
-	 * 
-	 */
-	public static void main(String[] args) {
+	}*/
+//
+//	/**
+//	 * @author Cedric
+//	 * @param args
+//	 * 
+//	 * You can control Snake a bit from console. For example you can specify how your Logger works:
+//	 * Use following Arguments to manually control Logger:
+//	 *  -d: debug-Mode: Enabling Logger with File-Write-Permission if debugging is enabled in Config
+//	 *  -dp: - if following arg = on: Enabling Logger and writing this permission also to the Config
+//	 *  	 - if following arg = off: Disabling Loggger and disabling it also by Config (logging)
+//	 *  -da: can enable (following arg = on) or disable (following arg = off) debugging by config
+//	 * 
+//	 */
+	/*public static void main(String[] args) {
 		String argsString = "";
 		for(String s : args) argsString += ", " + s;
 		if(argsString.equals("")) argsString = "NONE"; 
@@ -130,5 +196,6 @@ public class SnakeGame {
 		// Starts UIManager
 		SwingUtilities.invokeLater(new Runnable() { @Override public void run() {UIManager.init();}});
 	}
+	*/
 	
 }

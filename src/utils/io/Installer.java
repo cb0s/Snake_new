@@ -29,6 +29,7 @@ public class Installer {
 	private static ArrayList<String> installationProcess = new ArrayList<String>();
 	
 	private final static boolean installed;
+
 	static {
 		installed = new File("data/installed.0").exists();
 	}

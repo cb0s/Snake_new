@@ -8,8 +8,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import snake.SnakeGame;
-
 /**
  * @author Leo, Cedric
  * @version 2.0
@@ -28,21 +26,21 @@ public class Logger {
 	// * Constants *
 	// *************
 	public final static IniAdapter ini;
+	public final static boolean fileLogging;
 	private static final boolean loadMonthFromLang;
 	private static final String timeFormat;
 	private static final String INFO_PREFIX = "[Info]";
 	private static final String WARNING_PREFIX = "[Warning]";
 	private static final String ERROR_PREFIX = "[Error]";
-
+	
 	static {
-		ini = new IniAdapter(SnakeGame.loggerIniPath);
+		ini = new IniAdapter(PathsLoader.getSavedPath("logger_ini"));
 		loadMonthFromLang = Boolean.parseBoolean(ini.getString("loadFromLangFiles"));
 		timeFormat = ini.getString("time_format");
 		
-		boolean fileLogging = false;
-		
 		if(Installer.isInstalled()) {
 			if(Boolean.parseBoolean(ConfigAdapter.getDefaultConfig().getConfigString("logging"))) fileLogging = true;
+			else fileLogging = false;
 			/*
 			else if(args.length != 0) {
 				for(int i = 0; i < args.length; i++) {
@@ -77,7 +75,7 @@ public class Logger {
 				}
 			}
 			*/
-		}
+		} else fileLogging = false;
 		setDefaultLogger(new Logger(fileLogging));
 	}
 
@@ -88,6 +86,7 @@ public class Logger {
 	// * Fields *
 	// **********
 	private static Logger defaultLogger;
+	private static boolean initialized = false;
 	
 	private LinkedBlockingQueue<String> messages;
 	private PrintWriter logFileWriter;
@@ -111,7 +110,7 @@ public class Logger {
 	 * @param fileLogging whether the log output will be written into the standard logfile
 	 */
 	public Logger(boolean fileLogging) {
-		this(fileLogging ? new File(ini.getString("path").replace("*", "") + "snake.log") : null);
+		this(fileLogging ? new File(ini.getString("path") + "snake.log") : null);
 	}
 
 	/**
@@ -304,6 +303,15 @@ public class Logger {
 	}
 	
 	/**
+	 * Returns whether defaultLogger exists or not.
+	 * 
+	 * @return whether defaultLogger exists or not
+	 */
+	public static boolean isInitialized() {
+		return initialized;
+	}
+	
+	/**
 	 * Returns the default logger.
 	 * 
 	 * @return the default logger
@@ -319,6 +327,7 @@ public class Logger {
 	 */
 	public static void setDefaultLogger(Logger defaultLogger) {
 		Logger.defaultLogger = defaultLogger;
+		initialized = true;
 	}
 
 	
