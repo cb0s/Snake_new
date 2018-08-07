@@ -12,6 +12,7 @@ data/lang/snake_de_DE.lang
 data/lang/snake_en_EN.lang
 data/saves/
 data/config.cfg
+data/paths.prop
 res/
 res/fx/
 res/ui/

@@ -1,0 +1,14 @@
+28/07/2018-23:39:29 INFO Starting installation
+28/07/2018-23:39:29 INFO Loading installation script
+28/07/2018-23:39:29 INFO Script loaded. Installation will start now
+28/07/2018-23:39:29 ERROR Installing failed! Exiting installer...
+Error: java.util.zip.ZipFile.open(Native Method)
+java.util.zip.ZipFile.<init>(ZipFile.java:219)
+java.util.zip.ZipFile.<init>(ZipFile.java:149)
+java.util.jar.JarFile.<init>(JarFile.java:166)
+java.util.jar.JarFile.<init>(JarFile.java:130)
+utils.io.Installer$1.run(Installer.java:92)
+java.lang.Thread.run(Thread.java:745)
+utils.io.Installer.install(Installer.java:160)
+snake.SnakeGame.main(SnakeGame.java:120)
+
