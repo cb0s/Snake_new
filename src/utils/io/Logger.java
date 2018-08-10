@@ -1,396 +1,388 @@
 package utils.io;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
+ * Lets you log text and Exceptions asynchronously with timestamp and optional prefix.</br></br>
+ * 
+ * <b>Use:</b> Instantiate a new logger or use one of the standard loggers:<ul>
+ * <li>{@link Logger#getDefaultLogger()} for plain logging</li>
+ * <li>{@link Logger#getDefaultInfoLogger()} for logging information</li>
+ * <li>{@link Logger#getDefaultWarningLogger()} for logging warnings</li>
+ * <li>{@link Logger#getDefaultErrorLogger()} for logging errors</li>
+ * </ul>
+ * 
  * @author Leo, Cedric
- * @version 2.0
- * @category util</br></br>
- * 
- * Lets you log all the stuff you want to log with a time-stamp and a category. At the moment INFO, WARNING and ERROR exist.</br>
- * On top of that you can log Exceptions.</br></br>
- * 
- * <b>Use:</b> If you want to use the default-Logger do <i>utils.io.Logger.getDefaultLogger().log[Info/Warning/Exception/Error](String msg);</i></br>
- * Otherwise create a new instance and use this instance like the defaultLogger.
- * 
+ * @version 3.0
+ * @category util
  */
 public class Logger {
 
 	// *************
 	// * Constants *
 	// *************
-	public final static IniAdapter ini;
-	public final static boolean fileLogging;
-	private static final boolean loadMonthFromLang;
-	private static final String timeFormat;
-	private static final String INFO_PREFIX = "[Info]";
-	private static final String WARNING_PREFIX = "[Warning]";
-	private static final String ERROR_PREFIX = "[Error]";
+	public static final String defaultDateTimePattern = "dd/MM/yyyy-HH:mm:ss";
 	
-	static {
-		ini = new IniAdapter(PathsLoader.getSavedPath("logger_ini"));
-		loadMonthFromLang = Boolean.parseBoolean(ini.getString("loadFromLangFiles"));
-		timeFormat = ini.getString("time_format");
-		
-		if(Installer.isInstalled()) {
-			if(Boolean.parseBoolean(ConfigAdapter.getDefaultConfig().getConfigString("logging"))) fileLogging = true;
-			else fileLogging = false;
-			/*
-			else if(args.length != 0) {
-				for(int i = 0; i < args.length; i++) {
-					if(args[i].equalsIgnoreCase("-d")) {
-						if(ConfigAdapter.getConfigString("debugging").equals("on")) {
-							fileLogging = true;
-						} else {
-							fileLogging = false;
-						}
-					} else if(args.length != i+1) {
-						if(args[i].equalsIgnoreCase("-dp")) {
-							if(args[i+1].equalsIgnoreCase("on")) {
-								ConfigAdapter.setConfigString("logging", "true");
-								ConfigAdapter.setConfigString("debugging", "on");
-							}
-							else if(args[i+1].equalsIgnoreCase("off")) ConfigAdapter.setConfigString("logging", "false");
-							fileLogging = true;
-						}
-						if(args[i].equalsIgnoreCase("-da")) {
-							if(args[i+1].equalsIgnoreCase("on")) {
-								ConfigAdapter.setConfigString("debugging", "on");
-								fileLogging = true;
-							} else {
-								ConfigAdapter.setConfigString("debugging", "off");
-								fileLogging = false;
-							}
-						}
-					} else {
-						System.out.println(Logger.LoggingType.WARNING.type + "Unknown arguments...");
-						break;
-					}
-				}
-			}
-			*/
-		} else fileLogging = false;
-		setDefaultLogger(new Logger(fileLogging));
-	}
+	
 
-	
-	
-	
+
 	// **********
 	// * Fields *
 	// **********
-	private static Logger defaultLogger;
-	private static boolean initialized = false;
-	
-	private LinkedBlockingQueue<String> messages;
-	private PrintWriter logFileWriter;
+	private static Logger defaultLogger, defaultInfoLogger, defaultWarningLogger, defaultErrorLogger;
 
 	
-	
+	private final SimpleDateFormat simpleDateFormat;
+	private final String prefix;
+	private LinkedBlockingQueue<String> buffer;
+	private Thread worker;
+
+
+
 
 	// ****************
 	// * Constructors *
 	// ****************
 	/**
-	 * Creates a new logger.
+	 * Creates a new logger using: <ul>
+	 * <li>{@link #defaultDateTimePattern},</li>
+	 * <li>an empty prefix and</li>
+	 * <li>{@link System#out} as output.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.
 	 */
 	public Logger() {
-		this(null);
-	}
-	
-	/**
-	 * Creates a new logger. If fileLogging is true, the log output will be written into the standard logfile.
-	 * 
-	 * @param fileLogging whether the log output will be written into the standard logfile
-	 */
-	public Logger(boolean fileLogging) {
-		this(fileLogging ? new File(ini.getString("path") + "snake.log") : null);
+		this(defaultDateTimePattern, "", new OutputStream[] {System.out});
 	}
 
 	/**
-	 * Creates a new logger that writes its ouput into the given file.
+	 * Creates a new logger using: <ul>
+	 * <li>{@link #defaultDateTimePattern},</li>
+	 * <li>the given prefix and</li>
+	 * <li>{@link System#out} as output.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
 	 * 
-	 * @param logfile the file to write the log output into
+	 * @param prefix the prefix preceeding every log entry
 	 */
-	public Logger(File logfile) {
-		messages = new LinkedBlockingQueue<>();
+	public Logger(String prefix) {
+		this(defaultDateTimePattern, prefix, new OutputStream[] {System.out});
+	}
 
-		//initiates logfile writer if requested
-		if(logfile != null) {
-			try {
-				if(!logfile.exists()) {
-					File dir = new File(logfile.getAbsolutePath().substring(0, logfile.getAbsolutePath().lastIndexOf(logfile.getName())));
-					if (!dir.exists()) dir.mkdir();
-					logfile.createNewFile();
-				}
-				logFileWriter = new PrintWriter(new FileWriter(logfile, true));
-				logFileWriter.write("\n----------------------------new-Session-started----------------------------\n");
-				logFileWriter.flush();
-			} catch (IOException e) {
-				logError("Error while initializing logfile.");
-				logError(e.getMessage());
-				logFileWriter = null;
-			}
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>the given date-time pattern,</li>
+	 * <li>the given prefix and</li>
+	 * <li>{@link System#out} as output.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param dateTimePattern the pattern for the timestamp
+	 * @param prefix the prefix preceeding every log entry
+	 */
+	public Logger(String dateTimePattern, String prefix) {
+		this(dateTimePattern, prefix, new OutputStream[] {System.out});
+	}
+
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>{@link #defaultDateTimePattern},</li>
+	 * <li>an empty prefix and</li>
+	 * <li>the given OutputStream as output.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param output the output channel
+	 */
+	public Logger(OutputStream output) {
+		this(defaultDateTimePattern, "", new OutputStream[] {output});
+	}
+
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>{@link #defaultDateTimePattern},</li>
+	 * <li>the given prefix and</li>
+	 * <li>the given OutputStream as output.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param prefix the prefix preceeding every log entry
+	 * @param output the output channel
+	 */
+	public Logger(String prefix, OutputStream output) {
+		this(defaultDateTimePattern, prefix, new OutputStream[] {output});
+	}
+
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>the given date-time pattern,</li>
+	 * <li>the given prefix and</li>
+	 * <li>the given OutputStream as output.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param dateTimePattern the pattern for the timestamp
+	 * @param prefix the prefix preceeding every log entry
+	 * @param output the output channel
+	 */
+	public Logger(String dateTimePattern, String prefix, OutputStream output) {
+		this(dateTimePattern, prefix, new OutputStream[] {output});
+	}
+
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>{@link #defaultDateTimePattern},</li>
+	 * <li>an empty prefix and</li>
+	 * <li>the given OutputStreams as outputs.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param outputs the output channels
+	 */
+	public Logger(OutputStream[] outputs) {
+		this(defaultDateTimePattern, "", outputs);
+	}
+
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>{@link #defaultDateTimePattern},</li>
+	 * <li>the given prefix and</li>
+	 * <li>the given OutputStreams as outputs.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param prefix the prefix preceeding every log entry
+	 * @param outputs the output channels
+	 */
+	public Logger(String prefix, OutputStream[] outputs) {
+		this(defaultDateTimePattern, prefix, outputs);
+	}
+
+	/**
+	 * Creates a new logger using: <ul>
+	 * <li>the given date-time pattern,</li>
+	 * <li>the given prefix and</li>
+	 * <li>the given OutputStreams as outputs.</li>
+	 * </ul>
+	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
+	 * 
+	 * @param dateTimePattern the pattern for the timestamp
+	 * @param prefix the prefix preceeding every log entry
+	 * @param outputs the output channels
+	 */
+	public Logger(String dateTimePattern, String prefix, OutputStream[] outputs) {
+		if(dateTimePattern == null || prefix == null || outputs == null) {
+			throw new NullPointerException("Arguments must not be null!");
 		}
-		System.out.println("\n----------------------------new-Session-started----------------------------\n");
-
-		//processes the elements in the messages queue in a separate thread
-		Thread loggerWorker = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					try {
-						String message = messages.take();
-						System.out.println(message);
-
-						if(logFileWriter != null) {
-							logFileWriter.println(message);
-							logFileWriter.flush();
-						}
-
-					} catch (InterruptedException e) {
-						logError(e.getMessage());
-					}
-				}
-			}
-		});
-		//optional
-		loggerWorker.setDaemon(true);
-		//end-optional
-		loggerWorker.start();
+		this.simpleDateFormat = new SimpleDateFormat(dateTimePattern);
+		this.prefix = prefix;
+		buffer = new LinkedBlockingQueue<>();
+		this.worker = new Thread(new LoggerWorker(buffer, Arrays.stream(outputs).map(PrintWriter::new).toArray(PrintWriter[]::new)));
+		this.worker.start();
+		this.log("----------------------------new-Session-started----------------------------\n");
 	}
 
-	
-	
+
+
 
 	// *******************
 	// * Private methods *
 	// *******************
-	
-	private enum Months {
-		JANUARY(!loadMonthFromLang ? ini.getString("January") : LangAdapter.getString("January")),
-		FEBRUARY(!loadMonthFromLang ? ini.getString("February") : LangAdapter.getString("February")),
-		MARCH(!loadMonthFromLang ? ini.getString("March") : LangAdapter.getString("March")),
-		APRIL(!loadMonthFromLang ? ini.getString("April") : LangAdapter.getString("April")),
-		MAY(!loadMonthFromLang ? ini.getString("May") : LangAdapter.getString("May")),
-		JUNE(!loadMonthFromLang ? ini.getString("June") : LangAdapter.getString("June")),
-		JULY(!loadMonthFromLang ? ini.getString("July") : LangAdapter.getString("July")),
-		AUGUST(!loadMonthFromLang ? ini.getString("August") : LangAdapter.getString("August")),
-		SEPTEMBER(!loadMonthFromLang ? ini.getString("September") : LangAdapter.getString("September")),
-		OCTOBER(!loadMonthFromLang ? ini.getString("October") : LangAdapter.getString("October")),
-		NOVEMBER(!loadMonthFromLang ? ini.getString("November") : LangAdapter.getString("November")),
-		DECEMBER(!loadMonthFromLang ? ini.getString("December") : LangAdapter.getString("December"));
-
-		private final String monthShortForm;
-
-		private Months(String monthShortForm) {
-			this.monthShortForm = monthShortForm;
-		}
-
-		private String getMonthSF() {
-			return monthShortForm;
-		}
-
-		private static Months getMonth(int id) {
-			switch(id) {
-			case 1:
-				return JANUARY;
-			case 2:
-				return FEBRUARY;
-			case 3:
-				return MARCH;
-			case 4:
-				return APRIL;
-			case 5:
-				return MAY;
-			case 6:
-				return JUNE;
-			case 7:
-				return JULY;
-			case 8:
-				return AUGUST;
-			case 9:
-				return SEPTEMBER;
-			case 10:
-				return OCTOBER;
-			case 11:
-				return NOVEMBER;
-			case 12:
-				return DECEMBER;
-			default:
-				return null;
-			}
-		}
+	/**
+	 * Returns the current date-time parsed in this logger's pattern.
+	 * 
+	 * @return the current date-time parsed in this logger's pattern
+	 */
+	public String getTime() {
+		return simpleDateFormat.format(new GregorianCalendar().getTime());
 	}
 
+
+
+
+	// ******************
+	// * Public methods *
+	// ******************
 	/**
-	 * Internal method for adding text with a timestamp to the logger buffer.
+	 * Logs the given text.
 	 * 
-	 * @param text the text to enqueue in the buffer
+	 * @param text the text to log
 	 */
 	private synchronized void log(String text) {
 		try {
-			messages.add("["+getTime()+"] " + text);
+			buffer.add("["+getTime()+"] " + prefix + text);
 		} catch (IllegalStateException e) {
 			System.out.println("Logger buffer out of bounds!");
 			e.printStackTrace();
 		}
 	}
 
-	
-	
-	
-	// ******************
-	// * Public methods *
-	// ******************
 	/**
-	 * Returns the time at the moment, it gets called
-	 * 
-	 * @return Returns the time at the moment, it gets called
-	 */
-	public static String getTime() {
-		GregorianCalendar gregorianCalendar = new GregorianCalendar();
-		int day_i = gregorianCalendar.get(Calendar.DAY_OF_MONTH);
-		int month_i = gregorianCalendar.get(Calendar.MONTH)+1;
-		int year = gregorianCalendar.get(Calendar.YEAR);
-		int hour_i = gregorianCalendar.get(Calendar.HOUR);
-		int hour24_i = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
-		String am_pm = gregorianCalendar.get(Calendar.AM_PM) == Calendar.AM ? "a" : "p";
-		int minute_i = gregorianCalendar.get(Calendar.MINUTE);
-		int second_i = gregorianCalendar.get(Calendar.SECOND);
-
-		String day = day_i < 10 ? "0" + day_i : ""+day_i;
-		String month = month_i < 10 ? "0" + month_i : ""+month_i;
-		String hour = hour_i < 10 ? "0" + hour_i : ""+hour_i;
-		String hour24 = hour24_i < 10 ? "0" + hour24_i : ""+hour24_i;
-		String minute = minute_i < 10 ? "0" + minute_i : ""+minute_i;
-		String second = second_i < 10 ? "0" + second_i : ""+second_i;
-		
-		switch(timeFormat) {
-		case "dd/mm/yyyy-24hh:mm:ss":
-			return day + "/" + month + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/mm/yyyy-hh:mm:ss":
-			return day + "/" + month + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "mm/dd/yyyy-hh:mm:ss":
-			return month + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/mm/dd-24hh:mm:ss":
-			return year + "/" + month + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/mm/dd-hh:mm:ss":
-			return year + "/" + month + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/mm-hh:mm:ss":
-			return year + "/" + day + "/" + month + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "dd/mmm/yyyy-24hh:mm:ss":
-			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour24 + ":" + minute + ":" + second;
-		case "dd/mmm/yyyy-hh:mm:ss":
-			return day + "/" + Months.getMonth(month_i).getMonthSF() + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "mmm/dd/yyyy-hh:mm:ss":
-			return Months.getMonth(month_i).getMonthSF() + "/" + day + "/" + year + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/mmm/dd-24hh:mm:ss":
-			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour24 + ":" + minute + ":" + second;
-		case "yyyy/mmm/dd-hh:mm:ss":
-			return year + "/" + Months.getMonth(month_i).getMonthSF() + "/" + day + "-" + hour + am_pm + ":" + minute + ":" + second;
-		case "yyyy/dd/mmm-hh:mm:ss":
-			return year + "/" + day + "/" + Months.getMonth(month_i).getMonthSF() + "-" + hour + am_pm + ":" + minute + ":" + second;
-		default:
-			return gregorianCalendar.getTime().toString();
-		}
-	}
-	
-	/**
-	 * Returns whether defaultLogger exists or not.
-	 * 
-	 * @return whether defaultLogger exists or not
-	 */
-	public static boolean isInitialized() {
-		return initialized;
-	}
-	
-	/**
-	 * Returns the default logger.
-	 * 
-	 * @return the default logger
-	 */
-	public static Logger getDefaultLogger() {
-		return defaultLogger;
-	}
-
-	/**
-	 * Sets the default logger.
-	 * 
-	 * @param defaultLogger the logger to set as default
-	 */
-	public static void setDefaultLogger(Logger defaultLogger) {
-		Logger.defaultLogger = defaultLogger;
-		initialized = true;
-	}
-
-	
-	
-	/**
-	 * Logs an information text.
-	 * 
-	 * @param text the text to log
-	 */
-	public synchronized void logInfo(String text) {
-		log(INFO_PREFIX + " " + text);
-	}
-
-	/**
-	 * Logs a warning text.
-	 * 
-	 * @param text the text to log
-	 */
-	public synchronized void logWarning(String text) {
-		log(WARNING_PREFIX + " " + text);
-	}
-
-	/**
-	 * Logs an error text.
-	 * 
-	 * @param text the text to log
-	 */
-	public synchronized void logError(String text) {
-		log(ERROR_PREFIX + " " + text);
-	}
-	
-	/**
-	 * Logs an exception like an error message.<br>
-	 * (Replaces Error class.)
+	 * Logs the given exception.
 	 * 
 	 * @param exception the exception to log
-	 * @return 
 	 */
-	public synchronized String logException(Exception exception) {
-		String msg = "";
+	public synchronized void logException(Exception exception) {
+		String msg = exception.toString();
 		for (StackTraceElement ste : exception.getStackTrace()) {
-			msg+=ste.toString()+'\n';
+			msg+="\tat "+ste.toString()+'\n';
 		}
-		logError("Error-Message: " + msg);
-		return msg;
-	}
-	
-	/**
-	 * Logs a plain text.
-	 * 
-	 * @param text the text to log
-	 */
-	public synchronized void logPlain(String text) {
-		log(text);
-	}
-	
-	/**
-	 * Returns whether the logger is writing its output into a file.
-	 * 
-	 * @return whether file logging is activated
-	 */
-	public boolean isFileLogging() {
-		return logFileWriter != null;
+		log(msg);
 	}
 
+	
+	/**
+	 * Returns the default logger for plain logging.
+	 * 
+	 * @return the default logger for plain logging
+	 */
+	public static synchronized Logger getDefaultLogger() {
+		if(defaultLogger == null) {
+			defaultLogger = new Logger();
+		}
+		return defaultLogger;
+	}
+	/**
+	 * Returns the default logger for plain logging.<br>
+	 * Short for {@link #getDefaultLogger()}.
+	 * 
+	 * @return the default logger for plain logging
+	 */
+	public static synchronized Logger gdL() {
+		return getDefaultLogger();
+	}
+	/**
+	 * Sets the default logger for plain logging.
+	 * 
+	 * @param logger the logger to set as default for plain logging
+	 */
+	public static synchronized void setDefaultLogger(Logger logger) {
+		Logger.defaultLogger = logger;
+	}
+
+
+	/**
+	 * Returns the default logger for logging information.
+	 * 
+	 * @return the default logger for logging information
+	 */
+	public static synchronized Logger getDefaultInfoLogger() {
+		if(defaultInfoLogger == null) {
+			defaultInfoLogger = new Logger("[Info] ");
+		}
+		return defaultInfoLogger;
+	}
+	/**
+	 * Returns the default logger for logging information.<br>
+	 * Short for {@link #getDefaultInfoLogger()}.
+	 * 
+	 * @return the default logger for logging information
+	 */
+	public static synchronized Logger gdiL() {
+		return getDefaultInfoLogger();
+	}
+	/**
+	 * Sets the default logger for logging information.
+	 * 
+	 * @param logger the logger to set as default for logging information
+	 */
+	public static synchronized void setDefaultInfoLogger(Logger logger) {
+		Logger.defaultInfoLogger = logger;
+	}
+
+
+	/**
+	 * Returns the default logger for logging warnings.
+	 * 
+	 * @return the default logger for logging warnings
+	 */
+	public static synchronized Logger getDefaultWarningLogger() {
+		if(defaultWarningLogger == null) {
+			defaultWarningLogger = new Logger("[Warning] ");
+		}
+		return defaultWarningLogger;
+	}
+	/**
+	 * Returns the default logger for logging warnings.<br>
+	 * Short for {@link #getDefaultWarningLogger()}.
+	 * 
+	 * @return the default logger for logging warnings
+	 */
+	public static synchronized Logger gdwL() {
+		return getDefaultWarningLogger();
+	}
+	/**
+	 * Sets the default logger for logging warnings.
+	 * 
+	 * @param logger the logger to set as default for logging warnings
+	 */
+	public static synchronized void setDefaultWarningLogger(Logger logger) {
+		Logger.defaultWarningLogger = logger;
+	}
+
+
+	/**
+	 * Returns the default logger for logging errors.
+	 * 
+	 * @return the default logger for logging errors
+	 */
+	public static synchronized Logger getDefaultErrorLogger() {
+		if(defaultErrorLogger == null) {
+			defaultErrorLogger = new Logger("[Error] ", System.err);
+		}
+		return defaultErrorLogger;
+	}
+	/**
+	 * Returns the default logger for logging errors.<br>
+	 * Short for {@link #getDefaultErrorLogger()}.
+	 * 
+	 * @return the default logger for logging errors
+	 */
+	public static synchronized Logger gdeL() {
+		return getDefaultErrorLogger();
+	}
+	/**
+	 * Sets the default logger for logging errors.
+	 * 
+	 * @param logger the logger to set as default for logging errors
+	 */
+	public static synchronized void setDefaultErrorLogger(Logger logger) {
+		Logger.defaultErrorLogger = logger;
+	}
+
+	
+	
+	
+	// *****************
+	// * Inner classes *
+	// *****************
+	private class LoggerWorker implements Runnable {
+		private LinkedBlockingQueue<String> buffer;
+		private final PrintWriter[] outputs;
+		
+		public LoggerWorker(LinkedBlockingQueue<String> buffer, PrintWriter[] outputs) {
+			this.buffer = buffer;
+			this.outputs = outputs;
+		}
+
+		@Override
+		public void run() {
+			while(true) {
+				try {
+					String message = buffer.take();
+					for(PrintWriter pw : outputs) {
+						pw.println(message);
+						pw.flush();
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }
