@@ -198,7 +198,7 @@ public class Logger {
 	 * 
 	 * @return the current date-time parsed in this logger's pattern
 	 */
-	public String getTime() {
+	private String getTime() {
 		return simpleDateFormat.format(new GregorianCalendar().getTime());
 	}
 
@@ -213,7 +213,7 @@ public class Logger {
 	 * 
 	 * @param text the text to log
 	 */
-	private synchronized void log(String text) {
+	public synchronized void log(String text) {
 		try {
 			buffer.add("["+getTime()+"] " + prefix + text);
 		} catch (IllegalStateException e) {
