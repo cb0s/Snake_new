@@ -10,7 +10,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Lets you log text and Exceptions asynchronously with timestamp and optional prefix.</br></br>
  * 
- * <b>Use:</b> Instantiate a new logger or use one of the standard loggers:<ul>
+ * <b>Use:</b> Instantiate a new logger or use the standard logger {@link #getDefaultLogger()}.<br>
+ * There are multiple prebuilt methods for logging:<ul>
  * <li>{@link Logger#getDefaultLogger()} for plain logging</li>
  * <li>{@link Logger#getDefaultInfoLogger()} for logging information</li>
  * <li>{@link Logger#getDefaultWarningLogger()} for logging warnings</li>
@@ -18,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * </ul>
  * 
  * @author Leo, Cedric
- * @version 3.0
+ * @version 3.1
  * @category util
  */
 public class Logger {
@@ -26,7 +27,11 @@ public class Logger {
 	// *************
 	// * Constants *
 	// *************
-	public static final String defaultDateTimePattern = "dd/MM/yyyy-HH:mm:ss";
+	private static final String PREFIX_INFO = "[Info] ";
+	private static final String PREFIX_WARNING = "[Warning] ";
+	private static final String PREFIX_ERROR = "[Error] ";
+	
+	public static final String DEAFAULT_DATE_TIME_PATTERN = "dd/MM/yyyy-HH:mm:ss";
 	
 	
 
@@ -34,11 +39,10 @@ public class Logger {
 	// **********
 	// * Fields *
 	// **********
-	private static Logger defaultLogger, defaultInfoLogger, defaultWarningLogger, defaultErrorLogger;
+	private static Logger defaultLogger;
 
 	
 	private final SimpleDateFormat simpleDateFormat;
-	private final String prefix;
 	private LinkedBlockingQueue<String> buffer;
 	private Thread worker;
 
@@ -50,139 +54,86 @@ public class Logger {
 	// ****************
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #defaultDateTimePattern},</li>
-	 * <li>an empty prefix and</li>
-	 * <li>{@link System#out} as output.</li>
+	 * <li>{@link #DEAFAULT_DATE_TIME_PATTERN}</li>
+	 * <li>{@link System#out} as output</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.
 	 */
 	public Logger() {
-		this(defaultDateTimePattern, "", new OutputStream[] {System.out});
+		this(DEAFAULT_DATE_TIME_PATTERN, new OutputStream[] {System.out});
 	}
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #defaultDateTimePattern},</li>
-	 * <li>the given prefix and</li>
-	 * <li>{@link System#out} as output.</li>
-	 * </ul>
-	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
-	 * 
-	 * @param prefix the prefix preceeding every log entry
-	 */
-	public Logger(String prefix) {
-		this(defaultDateTimePattern, prefix, new OutputStream[] {System.out});
-	}
-
-	/**
-	 * Creates a new logger using: <ul>
-	 * <li>the given date-time pattern,</li>
-	 * <li>the given prefix and</li>
-	 * <li>{@link System#out} as output.</li>
+	 * <li>the given date-time pattern</li>
+	 * <li>{@link System#out} as output</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
 	 * 
 	 * @param dateTimePattern the pattern for the timestamp
-	 * @param prefix the prefix preceeding every log entry
 	 */
-	public Logger(String dateTimePattern, String prefix) {
-		this(dateTimePattern, prefix, new OutputStream[] {System.out});
+	public Logger(String dateTimePattern) {
+		this(dateTimePattern, new OutputStream[] {System.out});
 	}
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #defaultDateTimePattern},</li>
-	 * <li>an empty prefix and</li>
-	 * <li>the given OutputStream as output.</li>
+	 * <li>{@link #DEAFAULT_DATE_TIME_PATTERN}</li>
+	 * <li>the given OutputStream as output</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
 	 * 
 	 * @param output the output channel
 	 */
 	public Logger(OutputStream output) {
-		this(defaultDateTimePattern, "", new OutputStream[] {output});
+		this(DEAFAULT_DATE_TIME_PATTERN, new OutputStream[] {output});
 	}
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #defaultDateTimePattern},</li>
-	 * <li>the given prefix and</li>
-	 * <li>the given OutputStream as output.</li>
-	 * </ul>
-	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
-	 * 
-	 * @param prefix the prefix preceeding every log entry
-	 * @param output the output channel
-	 */
-	public Logger(String prefix, OutputStream output) {
-		this(defaultDateTimePattern, prefix, new OutputStream[] {output});
-	}
-
-	/**
-	 * Creates a new logger using: <ul>
-	 * <li>the given date-time pattern,</li>
-	 * <li>the given prefix and</li>
-	 * <li>the given OutputStream as output.</li>
+	 * <li>the given date-time pattern</li>
+	 * <li>the given OutputStream as output</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
 	 * 
 	 * @param dateTimePattern the pattern for the timestamp
-	 * @param prefix the prefix preceeding every log entry
 	 * @param output the output channel
 	 */
-	public Logger(String dateTimePattern, String prefix, OutputStream output) {
-		this(dateTimePattern, prefix, new OutputStream[] {output});
+	public Logger(String dateTimePattern, OutputStream output) {
+		this(dateTimePattern, new OutputStream[] {output});
 	}
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #defaultDateTimePattern},</li>
-	 * <li>an empty prefix and</li>
-	 * <li>the given OutputStreams as outputs.</li>
+	 * <li>{@link #DEAFAULT_DATE_TIME_PATTERN}</li>
+	 * <li>the given OutputStreams as outputs</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
 	 * 
 	 * @param outputs the output channels
 	 */
 	public Logger(OutputStream[] outputs) {
-		this(defaultDateTimePattern, "", outputs);
+		this(DEAFAULT_DATE_TIME_PATTERN, outputs);
 	}
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #defaultDateTimePattern},</li>
-	 * <li>the given prefix and</li>
-	 * <li>the given OutputStreams as outputs.</li>
-	 * </ul>
-	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
-	 * 
-	 * @param prefix the prefix preceeding every log entry
-	 * @param outputs the output channels
-	 */
-	public Logger(String prefix, OutputStream[] outputs) {
-		this(defaultDateTimePattern, prefix, outputs);
-	}
-
-	/**
-	 * Creates a new logger using: <ul>
-	 * <li>the given date-time pattern,</li>
-	 * <li>the given prefix and</li>
-	 * <li>the given OutputStreams as outputs.</li>
+	 * <li>the given date-time pattern</li>
+	 * <li>the given OutputStreams as outputs</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
 	 * 
 	 * @param dateTimePattern the pattern for the timestamp
-	 * @param prefix the prefix preceeding every log entry
 	 * @param outputs the output channels
 	 */
-	public Logger(String dateTimePattern, String prefix, OutputStream[] outputs) {
-		if(dateTimePattern == null || prefix == null || outputs == null) {
+	public Logger(String dateTimePattern, OutputStream[] outputs) {
+		if(dateTimePattern == null || outputs == null) {
 			throw new NullPointerException("Arguments must not be null!");
 		}
 		this.simpleDateFormat = new SimpleDateFormat(dateTimePattern);
-		this.prefix = prefix;
 		buffer = new LinkedBlockingQueue<>();
 		this.worker = new Thread(new LoggerWorker(buffer, Arrays.stream(outputs).map(PrintWriter::new).toArray(PrintWriter[]::new)));
+		this.worker.setDaemon(true);
 		this.worker.start();
 		this.log("----------------------------new-Session-started----------------------------\n");
 	}
@@ -215,11 +166,38 @@ public class Logger {
 	 */
 	public synchronized void log(String text) {
 		try {
-			buffer.add("["+getTime()+"] " + prefix + text);
+			buffer.add("["+getTime()+"] " + text);
 		} catch (IllegalStateException e) {
 			System.out.println("Logger buffer out of bounds!");
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Logs the given text with the prefix {@value #PREFIX_INFO}.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logInfo(String text) {
+		log(PREFIX_INFO + text);
+	}
+
+	/**
+	 * Logs the given text with the prefix {@value #PREFIX_WARNING}.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logWarning(String text) {
+		log(PREFIX_WARNING + text);
+	}
+
+	/**
+	 * Logs the given text with the prefix {@value #PREFIX_ERROR}.
+	 * 
+	 * @param text the text to log
+	 */
+	public synchronized void logError(String text) {
+		log(PREFIX_ERROR + text);
 	}
 
 	/**
@@ -232,14 +210,14 @@ public class Logger {
 		for (StackTraceElement ste : exception.getStackTrace()) {
 			msg+="\tat "+ste.toString()+'\n';
 		}
-		log(msg);
+		logError(msg);
 	}
 
 	
 	/**
-	 * Returns the default logger for plain logging.
+	 * Returns the default logger.
 	 * 
-	 * @return the default logger for plain logging
+	 * @return the default logger
 	 */
 	public static synchronized Logger getDefaultLogger() {
 		if(defaultLogger == null) {
@@ -248,111 +226,21 @@ public class Logger {
 		return defaultLogger;
 	}
 	/**
-	 * Returns the default logger for plain logging.<br>
+	 * Returns the default logger.<br>
 	 * Short for {@link #getDefaultLogger()}.
 	 * 
-	 * @return the default logger for plain logging
+	 * @return the default logger
 	 */
 	public static synchronized Logger gdL() {
 		return getDefaultLogger();
 	}
 	/**
-	 * Sets the default logger for plain logging.
+	 * Sets the default logger.
 	 * 
-	 * @param logger the logger to set as default for plain logging
+	 * @param logger the logger to set as default
 	 */
 	public static synchronized void setDefaultLogger(Logger logger) {
 		Logger.defaultLogger = logger;
-	}
-
-
-	/**
-	 * Returns the default logger for logging information.
-	 * 
-	 * @return the default logger for logging information
-	 */
-	public static synchronized Logger getDefaultInfoLogger() {
-		if(defaultInfoLogger == null) {
-			defaultInfoLogger = new Logger("[Info] ");
-		}
-		return defaultInfoLogger;
-	}
-	/**
-	 * Returns the default logger for logging information.<br>
-	 * Short for {@link #getDefaultInfoLogger()}.
-	 * 
-	 * @return the default logger for logging information
-	 */
-	public static synchronized Logger gdiL() {
-		return getDefaultInfoLogger();
-	}
-	/**
-	 * Sets the default logger for logging information.
-	 * 
-	 * @param logger the logger to set as default for logging information
-	 */
-	public static synchronized void setDefaultInfoLogger(Logger logger) {
-		Logger.defaultInfoLogger = logger;
-	}
-
-
-	/**
-	 * Returns the default logger for logging warnings.
-	 * 
-	 * @return the default logger for logging warnings
-	 */
-	public static synchronized Logger getDefaultWarningLogger() {
-		if(defaultWarningLogger == null) {
-			defaultWarningLogger = new Logger("[Warning] ");
-		}
-		return defaultWarningLogger;
-	}
-	/**
-	 * Returns the default logger for logging warnings.<br>
-	 * Short for {@link #getDefaultWarningLogger()}.
-	 * 
-	 * @return the default logger for logging warnings
-	 */
-	public static synchronized Logger gdwL() {
-		return getDefaultWarningLogger();
-	}
-	/**
-	 * Sets the default logger for logging warnings.
-	 * 
-	 * @param logger the logger to set as default for logging warnings
-	 */
-	public static synchronized void setDefaultWarningLogger(Logger logger) {
-		Logger.defaultWarningLogger = logger;
-	}
-
-
-	/**
-	 * Returns the default logger for logging errors.
-	 * 
-	 * @return the default logger for logging errors
-	 */
-	public static synchronized Logger getDefaultErrorLogger() {
-		if(defaultErrorLogger == null) {
-			defaultErrorLogger = new Logger("[Error] ", System.err);
-		}
-		return defaultErrorLogger;
-	}
-	/**
-	 * Returns the default logger for logging errors.<br>
-	 * Short for {@link #getDefaultErrorLogger()}.
-	 * 
-	 * @return the default logger for logging errors
-	 */
-	public static synchronized Logger gdeL() {
-		return getDefaultErrorLogger();
-	}
-	/**
-	 * Sets the default logger for logging errors.
-	 * 
-	 * @param logger the logger to set as default for logging errors
-	 */
-	public static synchronized void setDefaultErrorLogger(Logger logger) {
-		Logger.defaultErrorLogger = logger;
 	}
 
 	

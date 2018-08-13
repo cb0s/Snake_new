@@ -1,44 +1,27 @@
 package snake.ui.entity;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.Image;
+import java.awt.Rectangle;
 
-public abstract class Entity {
+@SuppressWarnings("serial")
+public abstract class Entity extends Rectangle {
 	
-	protected float x, y;
+	protected Image currentImage;
 	
-	public Entity(float x, float y) {
-		this.x = x;
-		this.y = y;
+	public Entity(Image image, int x, int y, int width, int height) {
+		super(x, y, width, height);
+		currentImage = image;
 	}
 	
-	public float getX() {
-		return x;
-	}
-	
-	public float getY() {
-		return y;
-	}
-	
-	public Point getLocation() {
-		return new Point((int) x, (int) y);
-	}
-	
-	public void setX(float x) {
-		this.x = x;
-	}
-	
-	public void setY(float y) {
-		this.y = y;
-	}
-	
-	public void setPoint(Point p) {
-		x = p.x;
-		y = p.y;
+	protected synchronized void setCurrentImage(Image image) {
+		this.currentImage = image;
 	}
 	
 	public abstract void update();
-	
-	public abstract void render(Graphics2D g);
+
+	public void render(Graphics2D g) {
+		g.drawImage(currentImage, x, y, x + width, y + height, 0, 0, currentImage.getWidth(null), currentImage.getHeight(null), null);
+	}
 	
 }

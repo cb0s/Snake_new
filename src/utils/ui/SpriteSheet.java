@@ -1,4 +1,4 @@
-package utils.io;
+package utils.ui;
 
 import java.awt.image.BufferedImage;
 
