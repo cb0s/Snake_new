@@ -1,9 +1,6 @@
 package snake;
 
 import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -32,28 +29,28 @@ public class SnakeGame {
 	private static void initGraphics() {
 		// Trying to enable OpenGL
 		try {
-			Logger.getDefaultLogger().logInfo("Activating OpenGL");
+			Logger.gdL().logInfo("Activating OpenGL");
 			System.setProperty("sun.java2d.opengl", "true");
 		} catch (Exception e) {
-			Logger.getDefaultLogger().logError("Activating OpenGL failed!");
-			Logger.getDefaultLogger().logError(e.getMessage());
+			Logger.gdL().logError("Activating OpenGL failed!");
+			Logger.gdL().logError(e.getMessage());
 			JOptionPane.showMessageDialog(null, "Activating OpenGL failed!\nExiting");
 			System.exit(1);
 		}
 		if(!System.getProperty("sun.java2d.opengl").equals("true")) 
-			Logger.getDefaultLogger().logWarning("OpenGL is not activated now");
+			Logger.gdL().logWarning("OpenGL is not activated now");
 		else 
-			Logger.getDefaultLogger().logInfo("OpenGL successfully loaded");
+			Logger.gdL().logInfo("OpenGL successfully loaded");
 		
 		// Setting LookAndFeel
 		try {
-			Logger.getDefaultLogger().logInfo("Enabling SystemLookAndFeel");
+			Logger.gdL().logInfo("Enabling SystemLookAndFeel");
 			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-			Logger.getDefaultLogger().logInfo("SystemLookAndFeel successfully loaded");
+			Logger.gdL().logInfo("SystemLookAndFeel successfully loaded");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			Logger.getDefaultLogger().logError("Setting UILookAndFeel to SystemLookAndFeel failed!");
+			Logger.gdL().logError("Setting UILookAndFeel to SystemLookAndFeel failed!");
 			Logger.getDefaultLogger().logException(e);
-			Logger.getDefaultLogger().logWarning("The UI may be a bit different to what you are used to");
+			Logger.gdL().logWarning("The UI may be a bit different to what you are used to");
 			JOptionPane.showMessageDialog(null, "The UI may appear a bit different due to loading errors.", "Info", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -67,13 +64,7 @@ public class SnakeGame {
 		guiIni = new IniAdapter(PathsLoader.getSavedPath("gui_ini"));
 		initGraphics();
 		
-		game = new Game(MainMenuState.mainMenuIni.getString("title"), (int) Maths.format(guiIni.getString("width").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().width+"")), (int) Maths.format(guiIni.getString("height").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().height+"")), new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				game.stop();
-				System.exit(0);
-			}
-		});
-		game.getDisplay().center();
+		game = new Game(MainMenuState.mainMenuIni.getString("title"), (int) Maths.format(guiIni.getString("width").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().width+"")), (int) Maths.format(guiIni.getString("height").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().height+"")));
 		game.start();
 	}
 	
@@ -117,9 +108,9 @@ public class SnakeGame {
 			} catch (InterruptedException e) {
 				Logger.getDefaultLogger().logException(e);
 			}
-			Logger.getDefaultLogger().logInfo("Exiting now...");
+			Logger.gdiL().log("Exiting now...");
 		} catch (Exception e) {
-			Logger.getDefaultLogger().logError("Frames and Gameclock have not been initialized");
+			Logger.gdeL().log("Frames and Gameclock have not been initialized");
 		}
 
 		System.exit(0);
@@ -128,28 +119,28 @@ public class SnakeGame {
 	private static void initGraphics() {
 		// Trying to enable OpenGL
 		try {
-			Logger.getDefaultLogger().logInfo("Activating OpenGL");
+			Logger.gdiL().log("Activating OpenGL");
 			System.setProperty("sun.java2d.opengl", "true");
 		} catch (Exception e) {
-			Logger.getDefaultLogger().logError("Activating OpenGL failed!");
-			Logger.getDefaultLogger().logError(e.getMessage());
+			Logger.gdeL().log("Activating OpenGL failed!");
+			Logger.gdeL().log(e.getMessage());
 			JOptionPane.showMessageDialog(null, "Activating OpenGL failed!\nExiting");
 			System.exit(1);
 		}
 		if(!System.getProperty("sun.java2d.opengl").equals("true")) 
-			Logger.getDefaultLogger().logWarning("OpenGL is not activated now");
+			Logger.gdwL().log("OpenGL is not activated now");
 		else 
-			Logger.getDefaultLogger().logInfo("OpenGL successfully loaded");
+			Logger.gdiL().log("OpenGL successfully loaded");
 		
 		// Setting LookAndFeel
 		try {
-			Logger.getDefaultLogger().logInfo("Enabling SystemLookAndFeel");
+			Logger.gdiL().log("Enabling SystemLookAndFeel");
 			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-			Logger.getDefaultLogger().logInfo("SystemLookAndFeel successfully loaded");
+			Logger.gdiL().log("SystemLookAndFeel successfully loaded");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			Logger.getDefaultLogger().logError("Setting UILookAndFeel to SystemLookAndFeel failed!");
+			Logger.gdeL().log("Setting UILookAndFeel to SystemLookAndFeel failed!");
 			Logger.getDefaultLogger().logException(e);
-			Logger.getDefaultLogger().logWarning("The UI may be a bit different to what you are used to");
+			Logger.gdwL().log("The UI may be a bit different to what you are used to");
 			JOptionPane.showMessageDialog(null, "The UI may appear a bit different due to loading errors", "Info", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}*/
@@ -170,24 +161,24 @@ public class SnakeGame {
 		String argsString = "";
 		for(String s : args) argsString += ", " + s;
 		if(argsString.equals("")) argsString = "NONE"; 
-		Logger.getDefaultLogger().logInfo("Logger successfully initialized -> args: " + argsString);
+		Logger.gdiL().log("Logger successfully initialized -> args: " + argsString);
 		initGraphics();
 		if(!Installer.isInstalled()) {
-			Logger.getDefaultLogger().logInfo("Asking for installation");
+			Logger.gdiL().log("Asking for installation");
 			int result = JOptionPane.NO_OPTION;
 			try {
 				result = JOptionPane.showConfirmDialog(null, LangAdapter.getString("installer_start-question").replaceAll("%installation_dir%", SnakeGame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceAll(File.pathSeparator, "/")), LangAdapter.getString("installer_title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			} catch (HeadlessException | URISyntaxException e) {
-				Logger.getDefaultLogger().logError("An unexpected error occured!");
+				Logger.gdeL().log("An unexpected error occured!");
 				String msg = Logger.getDefaultLogger().logException(e);
 				JOptionPane.showMessageDialog(null, "An unexpected error occured, while loading installation.\n\nError:\n" + msg, "Installation-Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if(result == JOptionPane.YES_OPTION)
 				Installer.install(true);
 			else {
-				Logger.getDefaultLogger().logInfo("Declined installation");
+				Logger.gdiL().log("Declined installation");
 				if (result == JOptionPane.CANCEL_OPTION) {
-					Logger.getDefaultLogger().logInfo("User terminates");
+					Logger.gdiL().log("User terminates");
 					stop();
 				}
 			}

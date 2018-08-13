@@ -42,10 +42,10 @@ public class ImageLoader {
 			else
 				return ImageIO.read(ImageLoader.class.getResource("/" + path));
 		} catch (Exception e) {
-			Logger.getDefaultLogger().logError("An error occured while loading image \"" + path + "\"!");
-			String error = Logger.getDefaultLogger().logException(e);
-			Logger.getDefaultLogger().logWarning("Exiting now!");
-			JOptionPane.showMessageDialog(null, "An Error occured while loading image \"" + path + "\"\n\nError: " + error + "\n\nExiting now...", "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.gdeL().log("An error occured while loading image \"" + path + "\"!");
+			Logger.gdeL().logException(e);
+			Logger.gdwL().log("Exiting now!");
+			JOptionPane.showMessageDialog(null, "An Error occured while loading image \"" + path + "\"\n\nError: " + e.toString() + "\n\nExiting now...", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1); // TODO: Make this Exit-independent!
 		}
 		return null;

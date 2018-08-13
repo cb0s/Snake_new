@@ -2,16 +2,40 @@ package snake.ui;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
+import java.awt.image.BufferStrategy;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.JFrame;
 
+import snake.ui.entity.Entity;
 import utils.io.Logger;
+import utils.mechanics.Clock;
 
-public class Display {
+/**
+ * A display showing Entities.
+ * 
+ * @author Cedric, Leo
+ * @version 2.0
+ * @category ui
+ */
+public class Display extends Clock {
+
+	// *************
+	// * Constants *
+	// *************
+	private static final float DEFAULT_FPS = 60.0f;
 	
+	
+	
+
 	// ******************
 	// * Private Fields *
 	// ******************
@@ -19,35 +43,49 @@ public class Display {
 	private JFrame frame;
 	private Canvas canvas;
 	
-	private String title;
-	private int width, height;
+	//stored locally for performance reasons
+	private Dimension size;
+
+	//Render-related stuff
+	private BufferStrategy bs;
+	private Graphics2D g;
+	private CopyOnWriteArraySet<Entity> entities;
+
+	private Logger renderLogger;
 	
-	private WindowAdapter closeAdapter;
+	
+	
 	
 	// ****************
 	// * Constructors *
 	// ****************
 	public Display(String title, int width, int height) {
-		this.title = title;
-		this.width = width;
-		this.height = height;
+		this(title, width, height, DEFAULT_FPS, null);
 	}
-	
+
+	public Display(String title, int width, int height, float fps) {
+		this(title, width, height, fps, null);
+	}
+
 	public Display(String title, int width, int height, WindowAdapter closeAdapter) {
-		this(title, width, height);
-		this.closeAdapter = closeAdapter;
-		
-		createDisplay();
+		this(title, width, height, DEFAULT_FPS, closeAdapter);
 	}
 	
-	// *******************
-	// * Private Methods *
-	// *******************
-	private void createDisplay() {
-		Logger.getDefaultLogger().logInfo("Creating Display " + title);
+	public Display(String title, int width, int height, float fps, WindowAdapter closeAdapter) {
+		super(fps);
+		Logger.gdL().logInfo("Creating Display " + title);
+		try {
+			renderLogger = new Logger(new OutputStream[] {System.out, new FileOutputStream("render.log")});
+		} catch (FileNotFoundException e) {
+			Logger.gdL().logException(e);
+			renderLogger = Logger.gdL();
+		}
 		frame = new JFrame(title);
 		canvas = new Canvas();
 		
+		canvas.setFocusable(false);
+		
+		this.size = new Dimension();
 		setSize(width, height);
 		if (closeAdapter == null) frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		else frame.addWindowListener(closeAdapter);
@@ -55,13 +93,33 @@ public class Display {
 		
 		frame.add(canvas);
 		frame.pack();
+		center();
+
+		renderLogger.log("Creating BufferStrategy");
+		canvas.createBufferStrategy(3);
+		
+		entities = new CopyOnWriteArraySet<>();
 	}
+	
+	
+	
+	
+	// *******************
+	// * Private Methods *
+	// *******************
+	
+	
+	
 	
 	// ******************
 	// * Public Methods *
 	// ******************
 	public void center() {
 		frame.setLocationRelativeTo(null);
+	}
+	
+	public void addKeyListener(KeyListener l) {
+		frame.addKeyListener(l);
 	}
 	
 	// Setters
@@ -73,13 +131,10 @@ public class Display {
 		frame.setLocation(x, y);
 	}
 	
-	public void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;
+	public synchronized void setSize(int width, int height) {
+		this.size.setSize(width, height);
 		
 		frame.setSize(width, height);
-		
-		canvas.setFocusable(false);
 		
 		Dimension d = new Dimension(width, height);
 		canvas.setPreferredSize(d);
@@ -88,7 +143,6 @@ public class Display {
 	}
 	
 	public void setTitle(String title) {
-		this.title = title;
 		frame.setTitle(title);
 	}
 	
@@ -109,23 +163,43 @@ public class Display {
 		return frame.getLocation();
 	}
 	
-	public Dimension getSize() {
-		return frame.getSize();
+	public synchronized Dimension getSize() {
+		return this.size.getSize();
 	}
 	
 	public String getTitle() {
-		return title;
+		return frame.getTitle();
 	}
 	
 	public boolean isVisible() {
 		return frame.isVisible();
 	}
 	
-	public Canvas getCanvas() {
-		return canvas;
+	
+	
+	//Render-related stuff
+	public void addEntity(Entity entity) {
+		entities.add(entity);
 	}
 	
-	public JFrame getFrame() {
-		return frame;
+	public boolean removeEntity(Entity entity) {
+		return entities.remove(entity);
+	}
+	
+	@Override
+	public void tick(long delta) {
+		bs = canvas.getBufferStrategy();
+		
+		g = (Graphics2D) bs.getDrawGraphics();
+		g.clearRect(0, 0, getSize().width, getSize().height);
+
+		// Start Draw
+		for(Entity e : entities) {
+			e.render(g);
+		}
+		// End Draw
+		
+		bs.show();
+		g.dispose();
 	}
 }
