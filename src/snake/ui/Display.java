@@ -21,7 +21,7 @@ import snake.ui.entity.Entity;
 import snake.ui.tiles.Tile;
 import utils.io.Logger;
 import utils.mechanics.Clock;
-import utils.ui.MouseListener;
+import utils.ui.MouseManager;
 
 /**
  * A display showing DisplayElements.
@@ -90,7 +90,7 @@ public class Display extends Clock {
 			renderLogger = Logger.gdL();
 		}
 		frame = new JFrame(title);
-
+		
 		canvas = new Canvas();
 		canvas.setFocusable(false);
 		
@@ -132,9 +132,9 @@ public class Display extends Clock {
 		frame.addKeyListener(l);
 	}
 	
-	public void addMouseListener(MouseListener l) {
-		frame.addMouseListener(l);
-		frame.addMouseMotionListener(l);
+	public void addMouseListener(MouseManager l) {
+		canvas.addMouseListener(l);
+		canvas.addMouseMotionListener(l);
 	}
 	
 	// Setters
@@ -163,6 +163,10 @@ public class Display extends Clock {
 	
 	public void setVisible(boolean b) {
 		frame.setVisible(b);
+	}
+	
+	public void dispose() {
+		frame.dispose();
 	}
 	
 	public void setIconImage(Image image) {
@@ -243,6 +247,12 @@ public class Display extends Clock {
 			nextImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g = (Graphics2D) nextImage.getGraphics();
+			
+			// Update Tiles
+			for (Tile t : tiles) {
+				t.update();
+			}
+			// End Update Tiles
 			
 			// Start Draw		
 			for (Tile t : tiles) {

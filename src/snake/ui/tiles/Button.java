@@ -1,5 +1,8 @@
 package snake.ui.tiles;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 @SuppressWarnings("serial")
@@ -9,6 +12,7 @@ public class Button extends Tile {
 	private boolean focussed;
 	private boolean stateChanged;
 	private BufferedImage[] resources;
+	private ActionListener l;
 	
 	// NOT IMPLEMENTED YET
 	@Deprecated
@@ -38,8 +42,13 @@ public class Button extends Tile {
 		}
 	}
 
-	public void fireClickEvent() {
-		System.out.println("I got clicked");
+	public void fireClickEvent(MouseEvent e) {
+		if (l != null)
+			l.actionPerformed(new ActionEvent(e.getSource(), e.getID(), null));
+	}
+	
+	public void addActionListener(ActionListener l) {
+		this.l = l;
 	}
 
 	public boolean isFocussed() {

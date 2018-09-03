@@ -13,6 +13,7 @@ public abstract class State {
 	protected final Game game;
 	protected final Display display;
 	protected final ArrayList<Button> buttons;
+	protected int width, height;
 	
 	public State(Game game,  String name) {
 		Display.getRenderLogger().logInfo("Creating " + name + "-State");
@@ -47,11 +48,16 @@ public abstract class State {
 	public static void setState(State state) {
 		Display.getRenderLogger().logInfo("Setting State to " + state.name);
 		currentState = state;
+		currentState.display.removeAllDisplayElements();
+		currentState.width = currentState.display.getSize().width;
+		currentState.height = currentState.display.getSize().height;
 		currentState.onSet();
 	}
 	
 	public Button[] getButtons() {
-		return (Button[]) buttons.toArray();
+		Button[] buffer = new Button[buttons.size()];
+		buttons.toArray(buffer);
+		return buffer;
 	}
 	
 }

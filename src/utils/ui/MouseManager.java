@@ -5,15 +5,10 @@ import java.awt.event.MouseEvent;
 import snake.State;
 import snake.ui.tiles.Button;
 
-public class MouseListener implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
+public class MouseManager implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("Mouse Clicked");
-		int x = e.getX(), y = e.getY();
-		for (Button b : State.getState().getButtons())
-			if (checkAllignment(x, y, b))
-				b.fireClickEvent();
 	}
 
 	@Override
@@ -25,12 +20,20 @@ public class MouseListener implements java.awt.event.MouseListener, java.awt.eve
 					b.press();
 				continue;
 			}
-			b.unpress();
 		}
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {		
+	public void mouseReleased(MouseEvent e) {
+		int x = e.getX(), y = e.getY();
+		for (Button b : State.getState().getButtons()) {
+			if (checkAllignment(x, y, b)) {
+				b.fireClickEvent(e);
+			}
+			if (b.isPressed()) {
+				b.unpress();
+			}
+		}
 	}
 
 	@Override
@@ -43,6 +46,7 @@ public class MouseListener implements java.awt.event.MouseListener, java.awt.eve
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		mouseMoved(e);
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class MainMenuState extends State {
 	
 	// TILES
 	private ImageTile background;
-	private Button start, load, options;
+	private Button start, load, options, stop;
 	// END TILES
 	
 	static {
@@ -30,8 +30,6 @@ public class MainMenuState extends State {
 
 	@Override
 	public void onSet() {
-		int width = display.getSize().width, height = display.getSize().height;
-		
 		// LOAD RESOURCES
 		BufferedImage backgroundImage = ImageLoader.scale(ImageLoader.toBufferedImage(ImageLoader.getImage(mainMenuIni.getString("backgroundImagePath"))), width, height);
 		
@@ -39,17 +37,45 @@ public class MainMenuState extends State {
 		SpriteSheet mainMenuButtons = new SpriteSheet(buttonsSpriteSheet);
 		
 		BufferedImage[] startButtonResources = {mainMenuButtons.getSprite(0, 0, 250, 100), mainMenuButtons.getSprite(250, 0, 250, 100), mainMenuButtons.getSprite(500, 0, 250, 100)};
+		BufferedImage[] loadButtonResources = {mainMenuButtons.getSprite(0, 100, 250, 100), mainMenuButtons.getSprite(250, 100, 250, 100), mainMenuButtons.getSprite(500, 100, 250, 100)};
+		BufferedImage[] optionsButtonResources = {mainMenuButtons.getSprite(0, 200, 250, 100), mainMenuButtons.getSprite(250, 200, 250, 100), mainMenuButtons.getSprite(500, 200, 250, 100)};
+		BufferedImage[] stopButtonResources = {mainMenuButtons.getSprite(0, 300, 250, 100), mainMenuButtons.getSprite(250, 300, 250, 100), mainMenuButtons.getSprite(500, 300, 250, 100)};
 		// END LOAD RESOURCES
 		
 		// CREATE TILES
 		background = new ImageTile(backgroundImage, 0, 0, width, height);
-		start = new Button(startButtonResources, 100, 100, 250, 100);
+		start = new Button(startButtonResources, 515, 120, 250, 100);
+		start.addActionListener(e -> {
+			State.setState(game.getGameState());
+		});
+		
+		load = new Button(loadButtonResources, 515, 245, 250, 100);
+		load.addActionListener(e -> {
+			State.setState(game.getLoadGame());
+		});
+		
+		options = new Button(optionsButtonResources, 515, 370, 250, 100);
+		options.addActionListener(e -> {
+			State.setState(game.getMenuOptions());
+		});
+		
+		stop = new Button(stopButtonResources, 515, 495, 250, 100);
+		stop.addActionListener(e -> {
+			game.stopGame();
+		});
+		
 		// END CREATE TILES
 		
 		// ADD TILES
 		display.addDisplayElement(background);
 		display.addDisplayElement(start);
+		display.addDisplayElement(load);
+		display.addDisplayElement(options);
+		display.addDisplayElement(stop);
 		buttons.add(start);
+		buttons.add(load);
+		buttons.add(options);
+		buttons.add(stop);
 		// END ADD TILES
 	}
 

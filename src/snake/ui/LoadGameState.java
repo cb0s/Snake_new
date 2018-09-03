@@ -3,10 +3,10 @@ package snake.ui;
 import snake.Game;
 import snake.State;
 
-public class SaveState extends State {
+public class LoadGameState extends State {
 
-	public SaveState(Game game, String name) {
-		super(game, name);
+	public LoadGameState(Game game) {
+		super(game, "load-game");
 		// TODO Auto-generated constructor stub
 	}
 

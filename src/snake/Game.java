@@ -7,13 +7,14 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import snake.ui.Display;
 import snake.ui.GameState;
+import snake.ui.LoadGameState;
 import snake.ui.MainMenuState;
 import snake.ui.MenuOptionsState;
 import snake.ui.entity.Entity;
 import utils.io.Logger;
 import utils.mechanics.Clock;
 import utils.ui.KeyManager;
-import utils.ui.MouseListener;
+import utils.ui.MouseManager;
 
 /**
  * 
@@ -41,10 +42,11 @@ public class Game extends Clock {
 	private Display display;
 	
 	private State gameState;
-	private State mainMenu, menuOptions;
-	
+	private State mainMenu, menuOptions, loadGame;
+	private State gamePausedMenu;
+
 	private KeyManager keyManager;
-	private MouseListener mouseListener;
+	private MouseManager mouseListener;
 	
 	private CopyOnWriteArraySet<Entity> entities;
 
@@ -64,16 +66,7 @@ public class Game extends Clock {
 		Logger.gdL().logInfo("Setting up Game");
 		display = new Display(title, width, height, new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				Display.getRenderLogger().logInfo("Disposing Display");
-				e.getWindow().dispose();
-				try {
-					shutdownAll();
-					Logger.stopAll();
-				} catch (InterruptedException e1) {
-					Logger.gdL().logException(e1);
-				}
-				Logger.gdL().logInfo("Game stopped\n\n");
-				System.exit(0);
+				stopGame();
 			}
 		});
 		Display.getRenderLogger().logInfo("Initializing Game-Loop");
@@ -81,6 +74,8 @@ public class Game extends Clock {
 		gameState = new GameState(this);
 		mainMenu = new MainMenuState(this);
 		menuOptions = new MenuOptionsState(this);
+		loadGame = new LoadGameState(this);
+		// Create other States
 		
 		State.setState(mainMenu);
 
@@ -91,7 +86,7 @@ public class Game extends Clock {
 		Display.getRenderLogger().logInfo("Adding Key-Listener");
 		display.addKeyListener(keyManager);
 		
-		mouseListener = new MouseListener();
+		mouseListener = new MouseManager();
 		Display.getRenderLogger().logInfo("Adding Mouse-Listener");
 		display.addMouseListener(mouseListener);
 
@@ -113,16 +108,50 @@ public class Game extends Clock {
 	// * Public Methods *
 	// ******************
 
+	public void stopGame() {
+		Display.getRenderLogger().logInfo("Disposing Display");
+		getDisplay().dispose();
+		try {
+			shutdownAll();
+			Logger.stopAll();
+		} catch (InterruptedException e1) {
+			Logger.gdL().logException(e1);
+		}
+		Logger.gdL().logInfo("Game stopped\n\n");
+		System.exit(0);
+	}
+	
+	public State getGameState() {
+		return gameState;
+	}
+
+	public State getMainMenu() {
+		return mainMenu;
+	}
+
+	public State getMenuOptions() {
+		return menuOptions;
+	}
+
+	public State getLoadGame() {
+		return loadGame;
+	}
+
+	public State getGamePausedMenu() {
+		return gamePausedMenu;
+	}
+
 	public Display getDisplay() {
 		return display;
 	}
 	
 	@Override
 	public void tick(long delta) {
-		float tickVariance = ((float) delta) / 1000000000.0f;
+//		float tickVariance = ((float) delta) / 1000000000.0f;
 		//example for letting entities wander 1 px right every second, accounting that the time between tick calls may vary.
 		for(Entity e : entities) {
-			e.setLocation((int)(e.getX() + (1.0f * tickVariance)), (int)e.getY());
+			e.update();
+//			e.setLocation((int)(e.getX() + (1.0f * tickVariance)), (int)e.getY());
 		}
 	}
 	

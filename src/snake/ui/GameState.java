@@ -20,14 +20,11 @@ public class GameState extends State {
 
 	@Override
 	public void render(Graphics2D g) {
-		g.setColor(Color.GREEN);
-		g.fillRect(0, 0, 200, 200);
+
 	}
 
 	@Override
 	public void onSet() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
