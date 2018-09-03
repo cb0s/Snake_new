@@ -4,7 +4,6 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-import snake.SnakeGame;
 import utils.io.IniAdapter;
 import utils.io.Logger;
 

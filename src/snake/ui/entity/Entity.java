@@ -1,22 +1,76 @@
 package snake.ui.entity;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+
+import snake.ui.DisplayElement;
 
 @SuppressWarnings("serial")
-public abstract class Entity extends Rectangle {
+public abstract class Entity extends DisplayElement {
 	
-	protected Image currentImage;
+	/**
+	 * Whether an Entity is on the Field or not
+	 */
+	private boolean spawned;
+	/**
+	 * Position on the field
+	 */
+	private Point pos;
+	protected BufferedImage currentImage;
 	
-	public Entity(Image image, int x, int y, int width, int height) {
-		super(x, y, width, height);
-		currentImage = image;
+	/**
+	 * This constructor is not implemented yet!
+	 * 
+	 * @param resource
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @throws NoSuchMethodError
+	 */
+	public Entity(BufferedImage resource, float x, float y, float width, float height) throws NoSuchMethodError{
+		super(resource, x, y, width, height);
+		currentImage = resource;
+		throw new NoSuchMethodError("This Constructor is not implemented yet.");
 	}
 	
-	protected synchronized void setCurrentImage(Image image) {
+	public Entity(BufferedImage resource, int x, int y, int width, int height) {
+		super(resource, x, y, width, height);
+	}
+	
+	protected void setCurrentImage(BufferedImage image) {
 		this.currentImage = image;
 	}
+	
+	public Point getPos() {
+		return pos;
+	}
+	
+	public Point updatePos(Point pos) {
+		Point p = this.pos;
+		this.pos = pos;
+		return p;
+	}
+	
+	public boolean isSpawned() {
+		return spawned;
+	}
+	
+	public void spawn(Point pos) {
+		this.pos = pos;
+		spawned = true;
+		onSpawn();
+	}
+	
+	protected abstract void onSpawn();
+	
+	public void despawn() {
+		spawned = false;
+		onDespawn();
+	}
+	
+	protected abstract void onDespawn();
 	
 	public abstract void update();
 

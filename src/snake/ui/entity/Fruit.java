@@ -1,22 +1,22 @@
 package snake.ui.entity;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+@SuppressWarnings("serial")
 public class Fruit extends Item {
 	
-	private int size, special;
+	private int value, special;
 	private String name;
 	
-	public Fruit(String name, BufferedImage[] resources, int size, int special, float x, float y) {
-		super (x, y, resources);
+	public Fruit(BufferedImage resource, int x, int y, int width, int height, String name, int value, int special) {
+		super (resource, x, y, width, height);
 		this.name = name;
-		this.size = size;
+		this.value = value;
 		this.special = special;
 	}
 	
-	public int getSize() {
-		return size;
+	public int getValue() {
+		return value;
 	}
 	
 	public int getSpecial() {
@@ -28,12 +28,15 @@ public class Fruit extends Item {
 	}
 
 	@Override
-	public void update() {
+	protected void onSpawn() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void render(Graphics2D g) {
+	protected void onDespawn() {
+		// TODO Auto-generated method stub
 		
 	}
+
 }

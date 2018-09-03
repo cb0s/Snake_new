@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 /** 
  * 	@author Cedric	
@@ -20,7 +19,10 @@ import javax.swing.JOptionPane;
  *		- Create an Image-Object</br>
  *		- Scaling</br>
  *		- Rotating (not implemented yet) -> TODO: create this method</br>
- *		- Convert normal Image-Objects into BufferedImages
+ *		- Mirroring (not implemented yet) -> TODO: create this method</br>
+ *		- Convert normal Image-Objects into BufferedImages</br>
+ *		- Apply Filters:</br>
+ *			- Gaussian
  *
  **/
 public class ImageLoader {
@@ -37,16 +39,14 @@ public class ImageLoader {
 	 */
 	public static Image getImage(String path) {
 		try {
+			Logger.getDefaultLogger().logInfo("Trying to load image " + path);
 			if(Installer.isInstalled())
 				return ImageIO.read(new File(path));
 			else
 				return ImageIO.read(ImageLoader.class.getResource("/" + path));
 		} catch (Exception e) {
-			Logger.gdeL().log("An error occured while loading image \"" + path + "\"!");
-			Logger.gdeL().logException(e);
-			Logger.gdwL().log("Exiting now!");
-			JOptionPane.showMessageDialog(null, "An Error occured while loading image \"" + path + "\"\n\nError: " + e.toString() + "\n\nExiting now...", "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1); // TODO: Make this Exit-independent!
+			Logger.gdL().log("An error occured while loading image \"" + path + "\"!");
+			Logger.gdL().logExceptionGraphical(e, "An Error occured while loading image \"" + path + "\"\n\nError:\n%exception%\n\nExiting now!", "IO-Error", true);
 		}
 		return null;
 	}
@@ -76,6 +76,16 @@ public class ImageLoader {
 		return dbi;
 	}
 	
+	@Deprecated
+	public static BufferedImage rotate(BufferedImage img) throws NoSuchMethodException {
+		throw new NoSuchMethodException("This method is not implemented yet!");
+	}
+	
+	@Deprecated
+	public static BufferedImage mirror(BufferedImage img) throws NoSuchMethodException {
+		throw new NoSuchMethodException("This method is not implemented yet!");
+	}
+	
 	/**
 	 * Makes an Image to a BufferedImage.
 	 * 
@@ -91,6 +101,13 @@ public class ImageLoader {
 			g.dispose();
 			return bImage;
 		}
+	}
+	
+	public static BufferedImage applyGaussian(BufferedImage img, int radius) {
+		if (img == null) throw new NullPointerException();
+		if (radius < 0) throw new NumberFormatException("Radius cannot be smaller than 0");
+		// TODO!
+		return img;
 	}
 	
 }

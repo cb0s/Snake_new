@@ -1,13 +1,8 @@
 package snake;
 
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import snake.ui.Display;
@@ -17,13 +12,13 @@ import snake.ui.MenuOptionsState;
 import snake.ui.entity.Entity;
 import utils.io.Logger;
 import utils.mechanics.Clock;
-import utils.mechanics.Clockable;
 import utils.ui.KeyManager;
+import utils.ui.MouseListener;
 
 /**
  * 
  * @author Cedric, Leo
- * @version 2.0
+ * @version 2.1
  * @category main</br></br>
  * 
  * This class lets you create a new Game.</br>
@@ -38,7 +33,7 @@ public class Game extends Clock {
 	/**
 	 * The rate, at which the elements in the game change their position or state.
 	 */
-	private static final float DEFAULT_UPDATES_PER_SECOND = 1.0f;
+	private static final float DEFAULT_TICKS_PER_SECOND = 1.0f;
 	
 	// **********
 	// * Fields *
@@ -49,11 +44,10 @@ public class Game extends Clock {
 	private State mainMenu, menuOptions;
 	
 	private KeyManager keyManager;
-
+	private MouseListener mouseListener;
+	
 	private CopyOnWriteArraySet<Entity> entities;
-	
-	
-	
+
 	
 	// ****************
 	// * Constructors *
@@ -66,39 +60,47 @@ public class Game extends Clock {
 	 * @param height The height of the Game
 	 */
 	public Game(String title, int width, int height) {
-		super(DEFAULT_UPDATES_PER_SECOND);
+		super(DEFAULT_TICKS_PER_SECOND);
+		Logger.gdL().logInfo("Setting up Game");
 		display = new Display(title, width, height, new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				Display.getRenderLogger().logInfo("Disposing Display");
+				e.getWindow().dispose();
 				try {
-					stop();
+					shutdownAll();
+					Logger.stopAll();
 				} catch (InterruptedException e1) {
 					Logger.gdL().logException(e1);
 				}
+				Logger.gdL().logInfo("Game stopped\n\n");
 				System.exit(0);
 			}
 		});
-		Logger.gdL().log("Initializing Game-Loop");
+		Display.getRenderLogger().logInfo("Initializing Game-Loop");
+		Display.getRenderLogger().logInfo("Creating States");
 		gameState = new GameState(this);
 		mainMenu = new MainMenuState(this);
 		menuOptions = new MenuOptionsState(this);
 		
-		Logger.gdL().logInfo("Setting State to Main-Menu");
 		State.setState(mainMenu);
 
-		Logger.gdL().logInfo("Setting up Key-Listener");
+		Display.getRenderLogger().logInfo("Setting up Key-Listener");
 		keyManager = new KeyManager();
 		keyManager.addKeyToListener(KeyEvent.VK_ESCAPE);
 		keyManager.addKeyToListener(KeyEvent.VK_F1);
-		Logger.gdL().log("Adding Key-Listener");
+		Display.getRenderLogger().logInfo("Adding Key-Listener");
 		display.addKeyListener(keyManager);
 		
+		mouseListener = new MouseListener();
+		Display.getRenderLogger().logInfo("Adding Mouse-Listener");
+		display.addMouseListener(mouseListener);
 
 		entities = new CopyOnWriteArraySet<>();
 		
 		display.setVisible(true);
 		display.start();
+		Logger.gdL().logInfo("Game successfully started");
 	}
-	
 	
 	
 	
@@ -106,28 +108,15 @@ public class Game extends Clock {
 	// * Private Methods *
 	// *******************
 	
-	//TODO: implement game mechanics like creating entities and adding them to the display
-	
-	/*
-	/**
-	 * Updates all the variables and so on before rendering.
-	 */
-	/*private void update() {
-		// Update variables
-		width = display.getSize().width;
-		height = display.getSize().height;
-		
-		if (State.getState() != null)
-			State.getState().update();
-	}*/
-	
-	
-	
 	
 	// ******************
 	// * Public Methods *
 	// ******************
 
+	public Display getDisplay() {
+		return display;
+	}
+	
 	@Override
 	public void tick(long delta) {
 		float tickVariance = ((float) delta) / 1000000000.0f;

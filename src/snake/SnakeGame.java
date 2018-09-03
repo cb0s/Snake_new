@@ -12,19 +12,18 @@ import utils.io.PathsLoader;
 
 /** 
  * 	@author Cedric	
- *	@version 1.0
+ *	@version 1.1
  *	@category main</br></br>
  *
- *	<b>NOTE:</b> 	The game supports multiple languages which can be loaded from the UI.
+ *	<b>NOTE:</b> The game supports multiple languages which can be loaded from the UI.
  *			Also there is an integrated Logger but it just comes in English. If anyone
- *			want to implement it feel free.
+ *			wants to implement multiple languages for it feel free.
  **/
 
 public class SnakeGame {
 
-	private static Game game;
-	
-	public static IniAdapter guiIni;
+	private static IniAdapter guiIni;
+	private static Game snake;
 	
 	private static void initGraphics() {
 		// Trying to enable OpenGL
@@ -49,10 +48,13 @@ public class SnakeGame {
 			Logger.gdL().logInfo("SystemLookAndFeel successfully loaded");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			Logger.gdL().logError("Setting UILookAndFeel to SystemLookAndFeel failed!");
-			Logger.getDefaultLogger().logException(e);
+			Logger.gdL().logExceptionGraphical(e, "An Error occured while loading the SystemLookAndFeel.\nThe UI may appear a bit different due to these Errors.\n\nError:\n%exception", "Warning", false);
 			Logger.gdL().logWarning("The UI may be a bit different to what you are used to");
-			JOptionPane.showMessageDialog(null, "The UI may appear a bit different due to loading errors.", "Info", JOptionPane.INFORMATION_MESSAGE);
 		}
+	}
+	
+	public static Game getSnake() {
+		return snake;
 	}
 	
 	/**
@@ -61,12 +63,28 @@ public class SnakeGame {
 	 * @param args Arguments when for starting program
 	 */
 	public static void main(String[] args) {
-		guiIni = new IniAdapter(PathsLoader.getSavedPath("gui_ini"));
-		initGraphics();
+		try {
+			Logger.getDefaultLogger().logInfo("Starting Snake");
+			
+			guiIni = new IniAdapter(PathsLoader.getSavedPath("gui_ini"));
+			initGraphics();
+			
+			snake = new Game(MainMenuState.mainMenuIni.getString("title"), (int) Maths.format(guiIni.getString("width").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().width+"")), (int) Maths.format(guiIni.getString("height").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().height+"")));
 		
-		game = new Game(MainMenuState.mainMenuIni.getString("title"), (int) Maths.format(guiIni.getString("width").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().width+"")), (int) Maths.format(guiIni.getString("height").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().height+"")));
-		game.start();
+		} catch (Error | Exception e) {
+			try {
+				Logger.gdL().logError("A fatal error occured while running Snake! Error could not be identified!\nError:");
+				Logger.gdL().logExceptionGraphical(e, "A fatal error occured while running Snake! Error could not be identified!\n\nError:\n%exception%\n\nExiting", "Fatal Error!", true);
+			} catch(Exception e2) {
+				System.err.println("FATAL ERROR! THIS COULD NOT BE LOGGED!");
+				e.printStackTrace();
+				System.err.println("LOGGING ERROR:");
+				e2.printStackTrace();
+			}
+			System.exit(2);
+		}	
 	}
+}
 	
 	
 	
@@ -188,5 +206,3 @@ public class SnakeGame {
 		SwingUtilities.invokeLater(new Runnable() { @Override public void run() {UIManager.init();}});
 	}
 	*/
-	
-}

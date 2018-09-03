@@ -56,7 +56,7 @@ public class PropertiesAdapter {
 	 * @return The value which is linked to the given key in the properties-File
 	 */
 	public String getProperty(String key) {
-		if (Logger.isInitialized()) Logger.getDefaultLogger().logInfo("Trying to load " + key + " from " + path);
+		Logger.gdL().logInfo("Trying to load " + key + " from " + path);
 		return properties.getProperty(key);
 	}
 	
@@ -67,7 +67,7 @@ public class PropertiesAdapter {
 	 * @param value the value which will be written into the properties-File
 	 */
 	public void setProperty(String key, String value) {
-		if (Logger.isInitialized()) Logger.getDefaultLogger().logInfo("Trying to set " + key + " to " + value + " in " + path);
+		Logger.gdL().logInfo("Trying to set " + key + " to " + value + " in " + path);
 		properties.setProperty(key, value);
 	}
 	
@@ -79,7 +79,7 @@ public class PropertiesAdapter {
 	 * @throws IOException If an Error occurs while initializing either the Properties or the FileInputStream relating to it
 	 */
 	public void updateProperties(InputStream inputStream, String path) throws IOException {
-		if (Logger.isInitialized()) Logger.getDefaultLogger().logInfo("Updating Properties " + this.path + " to " + path);
+		Logger.gdL().logInfo("Updating Properties " + this.path + " to " + path);
 		this.path = path;
 		properties.load(inputStream);
 	}

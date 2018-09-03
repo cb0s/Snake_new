@@ -7,8 +7,6 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
-
 /**
  * 	@author Cedric	
  *	@version 1.0
@@ -35,7 +33,7 @@ public class LangAdapter {
 				resource = new PropertyResourceBundle(LangAdapter.class.getResourceAsStream("/" + path + "_" + locale.getLanguage() + "_" + locale.getCountry().toUpperCase() + ".lang"));
 		} catch (IOException e) {
 			Logger.getDefaultLogger().logError("Couldn't load language!");
-			String error = Logger.getDefaultLogger().logException(e);
+			Logger.gdL().logExceptionGraphical(e, "Loading Language failed...\nUsing default language de_DE now!", "Language-Error", false);
 			Logger.getDefaultLogger().logWarning("Using default language instead");
 			try {
 				if (Installer.isInstalled())
@@ -44,11 +42,8 @@ public class LangAdapter {
 					resource = new PropertyResourceBundle(new FileInputStream(new File(path + "_snake_de_DE.lang")));
 			} catch (IOException e1) {
 				Logger.getDefaultLogger().logError("Loading Backup-Language failed! Exiting...");
-				error = Logger.getDefaultLogger().logException(e1);
-				JOptionPane.showMessageDialog(null, "Loading languages failed!\n\nError: " + error + "\n\nExiting...", "Language Error!", JOptionPane.ERROR_MESSAGE);
-				System.exit(1);
+				Logger.gdL().logExceptionGraphical(e1, "Loading languages failed!\\n\\nError:\n%exception%\n\nExiting...", "Language Error!", true);
 			}
-			JOptionPane.showMessageDialog(null, "Loading Language failed...\nUsing default language de_DE now!", "Warning",JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	

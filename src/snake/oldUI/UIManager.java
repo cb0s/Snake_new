@@ -6,7 +6,6 @@ import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
-import snake.SnakeGame;
 import utils.Maths;
 import utils.io.ImageLoader;
 import utils.io.LangAdapter;
@@ -102,7 +101,7 @@ public class UIManager {
 		background.setPreferredSize(WindowAdapter.mainGetDimensions());
 		background.setLocation(0,0);
 		background.setBounds(background.getLocation().x, background.getLocation().y, background.getPreferredSize().width, background.getPreferredSize().width);
-		Component[] backgroundLayer = {background};
+//		Component[] backgroundLayer = {background};
 //		mainLayout.add(backgroundLayer, 0);
 		
 		Button play_new = new Button(LangAdapter.getString("play-new_button"));
