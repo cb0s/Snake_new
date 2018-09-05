@@ -2,12 +2,13 @@ package snake.ui.entity;
 
 import java.awt.image.BufferedImage;
 
-public abstract class SnakePart extends Entity {
+@SuppressWarnings("serial")
+public abstract class SnakePart extends Creature {
 
 	private BufferedImage texture;
 	
-	public SnakePart(float x, float y, BufferedImage texture) {
-		super(x, y);
+	public SnakePart(BufferedImage texture, int x, int y, int width, int height) {
+		super(texture, x, y, width, height);
 		this.texture = texture;
 	}
 	

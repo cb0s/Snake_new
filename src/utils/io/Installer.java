@@ -44,7 +44,7 @@ public class Installer {
 		if (s.substring(0, 4).equals("INFO")) Logger.getDefaultLogger().logInfo(s.substring(4));
 		else if (s.substring(0, 7).equals("WARNING")) Logger.getDefaultLogger().logWarning(s.substring(7));
 		else if (s.substring(0, 5).equals("ERROR")) Logger.getDefaultLogger().logError(s.substring(5));
-		installationProcess.add(Logger.getTime() + " " + s);
+		installationProcess.add(Logger.gdL().getTime() + " " + s);
 	}
 	
 	private enum LoggingType {
@@ -128,7 +128,7 @@ public class Installer {
 					log(LoggingType.INFO + " Successfully installed. Restart the game now");
 					JOptionPane.showMessageDialog(null, "Successfully installed!\nRestart the game now to finish installation", "Installation completed", JOptionPane.INFORMATION_MESSAGE);
 					PrintWriter w = new PrintWriter(new BufferedWriter(new FileWriter(new File("data/installed.0"))));
-					w.println("Successfully installed, " + Logger.getTime());
+					w.println("Successfully installed, " + Logger.gdL().getTime());
 					w.close();
 				} catch (IOException | URISyntaxException e) {
 					for(int i = filesInstalled.size()-1; i > -1; i--) {
@@ -138,9 +138,8 @@ public class Installer {
 						log(LoggingType.WARNING + " " + delFile.getAbsolutePath() + " deleted");
 					}
 					log(LoggingType.ERROR + " Installing failed! Exiting installer...");
-					String error = Logger.getDefaultLogger().logException(e);
+					String error = Logger.gdL().logExceptionGraphical(e, LangAdapter.getString("installer_failed"), LangAdapter.getString("installer_title_F"), false);
 					installationProcess.add("Error: " + error);
-					JOptionPane.showMessageDialog(null, LangAdapter.getString("installer_failed").replace("%error%", error), LangAdapter.getString("installer_title_F"), JOptionPane.ERROR_MESSAGE);
 				} finally {
 					try {
 						Logger.getDefaultLogger().logInfo("Trying to create installation-process file");

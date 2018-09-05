@@ -15,13 +15,10 @@ import java.util.HashSet;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import snake.SnakeGame;
 import utils.Maths;
 import utils.io.IniAdapter;
-import utils.io.LangAdapter;
 import utils.io.Logger;
 
 /**
@@ -215,9 +212,9 @@ public class WindowAdapter {
 			device.setFullScreenWindow(mainFrame);
 		} catch(Exception exception) {
 			Logger.getDefaultLogger().logError("An error occured while trying to switch on Fullscreen-Mode");
-			String error = Logger.getDefaultLogger().logException(exception);
-			Logger.getDefaultLogger().logError("Error:\n"+error);
-			JOptionPane.showMessageDialog(null, LangAdapter.getString("ui_error_fullscreen_switchOn").replace("%error%", error), "ui_error_title", JOptionPane.ERROR_MESSAGE);
+//			String error = Logger.getDefaultLogger().logException(exception);
+//			Logger.getDefaultLogger().logError("Error:\n"+error);
+//			JOptionPane.showMessageDialog(null, LangAdapter.getString("ui_error_fullscreen_switchOn").replace("%error%", error), "ui_error_title", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
@@ -234,9 +231,9 @@ public class WindowAdapter {
 			fullscreen = false;
 		} catch (Exception exception) {
 			Logger.getDefaultLogger().logError("An error occured while trying to switch off Fullscreen-Mode");
-			String error = Logger.getDefaultLogger().logException(exception);
-			Logger.getDefaultLogger().logError("Error:\n"+error);
-			JOptionPane.showMessageDialog(null, LangAdapter.getString("ui_error_fullscreen_switchOff").replace("%error%", error), "ui_error_title", JOptionPane.ERROR_MESSAGE);
+//			String error = Logger.getDefaultLogger().logException(exception);
+//			Logger.getDefaultLogger().logError("Error:\n"+error);
+//			JOptionPane.showMessageDialog(null, LangAdapter.getString("ui_error_fullscreen_switchOff").replace("%error%", error), "ui_error_title", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	public static Dimension mainGetDimensions() {

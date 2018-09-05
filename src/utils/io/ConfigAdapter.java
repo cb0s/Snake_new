@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
 /** 
  * 	@author Cedric	
  *	@version 2.0
@@ -25,9 +23,9 @@ public class ConfigAdapter {
 	
 	static {
 		// Sets default values - They can be updated later with own ones
-		String defaultPath = PathsLoader.getSavedPath("config_inst");;
+		String defaultPath = PathsLoader.getSavedPath("config");;
 		if (!Installer.isInstalled())
-			defaultPath += '/';
+			defaultPath = '/' + defaultPath;
 		
 		defaultConfig = new ConfigAdapter(defaultPath);
 	}
@@ -58,8 +56,7 @@ public class ConfigAdapter {
 			return true;
 		} catch (IOException e) {
 			Logger.getDefaultLogger().logError("Loading " + path + " failed!");
-			String error = Logger.getDefaultLogger().logException(e);
-			JOptionPane.showMessageDialog(null, "Error while loading " + path + "!\nTrying to continue!\n\nError:\n" + error, "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.gdL().logExceptionGraphical(e, "Error while loading " + path + "!\n\nError:\n%exception%\n\nExiting now...", "Error", true);
 			return false;
 		}
 	}

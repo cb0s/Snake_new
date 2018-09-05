@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -15,15 +16,18 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.JFrame;
 
+import snake.State;
 import snake.ui.entity.Entity;
+import snake.ui.tiles.Tile;
 import utils.io.Logger;
 import utils.mechanics.Clock;
+import utils.ui.MouseManager;
 
 /**
- * A display showing Entities.
+ * A display showing DisplayElements.
  * 
  * @author Cedric, Leo
- * @version 2.0
+ * @version 2.1
  * @category ui
  */
 public class Display extends Clock {
@@ -32,7 +36,8 @@ public class Display extends Clock {
 	// * Constants *
 	// *************
 	private static final float DEFAULT_FPS = 60.0f;
-	
+	private CopyOnWriteArraySet<Entity> entities;
+	private CopyOnWriteArraySet<Tile> tiles; 
 	
 	
 
@@ -49,9 +54,13 @@ public class Display extends Clock {
 	//Render-related stuff
 	private BufferStrategy bs;
 	private Graphics2D g;
-	private CopyOnWriteArraySet<Entity> entities;
+	private BufferedImage nextImage;
+	/**
+	 * To maintain constant fps
+	 */
+	private boolean nextImageRendered;
 
-	private Logger renderLogger;
+	private static Logger renderLogger;
 	
 	
 	
@@ -75,14 +84,14 @@ public class Display extends Clock {
 		super(fps);
 		Logger.gdL().logInfo("Creating Display " + title);
 		try {
-			renderLogger = new Logger(new OutputStream[] {System.out, new FileOutputStream("render.log")});
+			renderLogger = new Logger(new OutputStream[] {System.out, new FileOutputStream("render.log")}, "[Render]");
 		} catch (FileNotFoundException e) {
 			Logger.gdL().logException(e);
 			renderLogger = Logger.gdL();
 		}
 		frame = new JFrame(title);
-		canvas = new Canvas();
 		
+		canvas = new Canvas();
 		canvas.setFocusable(false);
 		
 		this.size = new Dimension();
@@ -95,9 +104,10 @@ public class Display extends Clock {
 		frame.pack();
 		center();
 
-		renderLogger.log("Creating BufferStrategy");
-		canvas.createBufferStrategy(3);
+		renderLogger.logInfo("Creating BufferStrategy");
+		canvas.createBufferStrategy(Integer.parseInt(MainMenuState.mainMenuIni.getString("buffering")));
 		
+		tiles = new CopyOnWriteArraySet<>();
 		entities = new CopyOnWriteArraySet<>();
 	}
 	
@@ -120,6 +130,11 @@ public class Display extends Clock {
 	
 	public void addKeyListener(KeyListener l) {
 		frame.addKeyListener(l);
+	}
+	
+	public void addMouseListener(MouseManager l) {
+		canvas.addMouseListener(l);
+		canvas.addMouseMotionListener(l);
 	}
 	
 	// Setters
@@ -150,6 +165,10 @@ public class Display extends Clock {
 		frame.setVisible(b);
 	}
 	
+	public void dispose() {
+		frame.dispose();
+	}
+	
 	public void setIconImage(Image image) {
 		frame.setIconImage(image);
 	}
@@ -175,29 +194,92 @@ public class Display extends Clock {
 		return frame.isVisible();
 	}
 	
+	public static Logger getRenderLogger() {
+		return renderLogger;
+	}
+	
+	public int formatRatioX(float ratioX) {
+		return (int) (size.width * ratioX);
+	}
+	
+	public int formatRatioY(float ratioY) {
+		return (int) (size.height * ratioY);
+	}
 	
 	
 	//Render-related stuff
-	public void addEntity(Entity entity) {
-		entities.add(entity);
+	public void addDisplayElement(DisplayElement displayElement) {
+		if (displayElement instanceof Entity) entities.add((Entity) displayElement);
+		else tiles.add((Tile) displayElement);
+		System.out.println(tiles.toArray()[tiles.size()-1]);
 	}
 	
-	public boolean removeEntity(Entity entity) {
-		return entities.remove(entity);
+	public boolean removeDisplayElement(DisplayElement displayElement) {
+		if (displayElement instanceof Entity) return entities.remove((Entity) displayElement);
+		else return tiles.remove((Tile) displayElement);
 	}
 	
+	public void removeAllDisplayElements() {
+		entities = new CopyOnWriteArraySet<>();
+		tiles = new CopyOnWriteArraySet<>();
+	}
+	
+	public synchronized BufferedImage getNextRenderedImage() {
+		return nextImage;
+	}
+	
+	/**
+	 * Sets the next image to render
+	 */
+	public synchronized void setNextRenderingImage(BufferedImage nextImage) {
+		this.nextImage = nextImage;
+		nextImageRendered = true;
+	}
+	
+	/**
+	 * Updates the next Image
+	 */
 	@Override
 	public void tick(long delta) {
+		if (nextImageRendered) {
+			nextImageRendered = false;
+		} else {
+			nextImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics2D g = (Graphics2D) nextImage.getGraphics();
+			
+			// Update Tiles
+			for (Tile t : tiles) {
+				t.update();
+			}
+			// End Update Tiles
+			
+			// Start Draw		
+			for (Tile t : tiles) {
+				t.render(g);
+			}
+			for (Entity e : entities) {
+				e.render(g);
+			}
+			// End Draw
+			
+			g.dispose();
+		}
+		State.getState().update();
+	}
+	
+	/**
+	 * Renders the next Image
+	 */
+	public void render() {
 		bs = canvas.getBufferStrategy();
-		
+
 		g = (Graphics2D) bs.getDrawGraphics();
 		g.clearRect(0, 0, getSize().width, getSize().height);
-
-		// Start Draw
-		for(Entity e : entities) {
-			e.render(g);
-		}
-		// End Draw
+		
+		g.drawImage(nextImage, 0, 0, nextImage.getWidth(), nextImage.getHeight(), 0, 0, nextImage.getWidth(), nextImage.getHeight(), null);
+		
+		State.getState().render(g);
 		
 		bs.show();
 		g.dispose();

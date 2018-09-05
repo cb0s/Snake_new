@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
 /** 
  * 	@author Cedric	
  *	@version 2.0
@@ -61,12 +59,8 @@ public class IniAdapter {
 				properties.updateProperties(this.getClass().getResourceAsStream("/" + path), path);
 			return true;
 		} catch (IOException e) {
-			String error = e.getMessage();
-			if (Logger.isInitialized()) {
-				Logger.getDefaultLogger().logError("Loading " + path + " failed!");
-				error = Logger.getDefaultLogger().logException(e);
-			}
-			JOptionPane.showMessageDialog(null, "Error while loading " + path + "!\nTrying to continue!\n\nError:\n" + error, "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.getDefaultLogger().logError("Loading " + path + " failed!");
+			Logger.gdL().logExceptionGraphical(e, "Error while loading " + path + "!\n\nError:\n%exception%\n\nExiting", "IO-Error", true);
 			return false;
 		}
 	}

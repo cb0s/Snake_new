@@ -3,7 +3,6 @@ package snake.oldUI;
 import java.awt.Image;
 import java.util.Random;
 
-import snake.SnakeGame;
 import utils.Maths;
 import utils.Stack;
 import utils.io.ImageLoader;

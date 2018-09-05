@@ -9,18 +9,22 @@ import snake.State;
 public class GameState extends State {
 
 	public GameState(Game game) {
-		super(game);
+		super(game, "Game");
 	}
 	
 	@Override
 	public void update() {
-		
+		game.resume();
+		super.update();
 	}
 
 	@Override
 	public void render(Graphics2D g) {
-		g.setColor(Color.GREEN);
-		g.fillRect(0, 0, 200, 200);
+
+	}
+
+	@Override
+	public void onSet() {
 	}
 
 }

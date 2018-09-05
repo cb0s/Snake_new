@@ -1,7 +1,5 @@
 package snake.oldUI;
 
-import java.io.File;
-
 import utils.Maths;
 import utils.io.ConfigAdapter;
 import utils.io.Logger;
@@ -28,8 +26,8 @@ public class GameClock {
 		fps = Integer.parseInt(ConfigAdapter.getDefaultConfig().getConfigString("max_frames"));
 		tick = (int) Maths.format(ConfigAdapter.getDefaultConfig().getConfigString("renderlog_tick").replaceAll("%frames%", ""+fps));
 		// TODO: Fix ini Access
-		renderLog = new Logger(Boolean.parseBoolean(ConfigAdapter.getDefaultConfig().getConfigString("logging")) ? new File(Logger.ini.getString("path").replace("*", "render.log")) : null);
-		renderLog.logPlain("----Render-Logger--initialized----");
+//		renderLog = new Logger(Boolean.parseBoolean(ConfigAdapter.getDefaultConfig().getConfigString("logging")) ? new File(Logger.ini.getString("path").replace("*", "render.log")) : null);
+//		renderLog.logPlain("----Render-Logger--initialized----");
 	}
 	
 	static Logger getRenderLogger() {
