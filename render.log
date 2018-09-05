@@ -1,15 +1,14 @@
-[03/09/2018-17:30:32] [Render] [Info] Creating BufferStrategy
-[03/09/2018-17:30:32] [Render] [Info] Initializing Game-Loop
-[03/09/2018-17:30:32] [Render] [Info] Creating States
-[03/09/2018-17:30:32] [Render] [Info] Creating Game-State
-[03/09/2018-17:30:32] [Render] [Info] Creating Main-Menu-State
-[03/09/2018-17:30:32] [Render] [Info] Creating Menu-Options-State
-[03/09/2018-17:30:32] [Render] [Info] Creating load-game-State
-[03/09/2018-17:30:32] [Render] [Info] Setting State to Main-Menu
-[03/09/2018-17:30:34] [Render] [Info] Setting up Key-Listener
-[03/09/2018-17:30:34] [Render] [Info] KeyListener for key 27 added
-[03/09/2018-17:30:34] [Render] [Info] KeyListener for key 112 added
-[03/09/2018-17:30:34] [Render] [Info] Adding Key-Listener
-[03/09/2018-17:30:34] [Render] [Info] Adding Mouse-Listener
-[03/09/2018-17:30:46] [Render] [Info] Setting State to Menu-Options
-[03/09/2018-17:30:49] [Render] [Info] Disposing Display
+[05/09/2018-13:56:32] [Render] [Info] Creating BufferStrategy
+[05/09/2018-13:56:32] [Render] [Info] Initializing Game-Loop
+[05/09/2018-13:56:32] [Render] [Info] Creating States
+[05/09/2018-13:56:32] [Render] [Info] Creating Game-State
+[05/09/2018-13:56:32] [Render] [Info] Creating Main-Menu-State
+[05/09/2018-13:56:32] [Render] [Info] Creating Menu-Options-State
+[05/09/2018-13:56:32] [Render] [Info] Creating load-game-State
+[05/09/2018-13:56:32] [Render] [Info] Setting State to Main-Menu
+[05/09/2018-13:56:34] [Render] [Info] Setting up Key-Listener
+[05/09/2018-13:56:34] [Render] [Info] KeyListener for key 27 added
+[05/09/2018-13:56:34] [Render] [Info] KeyListener for key 112 added
+[05/09/2018-13:56:34] [Render] [Info] Adding Key-Listener
+[05/09/2018-13:56:34] [Render] [Info] Adding Mouse-Listener
+[05/09/2018-13:56:40] [Render] [Info] Disposing Display

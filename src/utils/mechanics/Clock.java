@@ -1,6 +1,6 @@
 package utils.mechanics;
 
-import java.util.LinkedList;
+//import java.util.LinkedList;
 
 import utils.io.Logger;
 
@@ -24,12 +24,12 @@ public class Clock implements Clockable {
 	private volatile Thread clockThread;
 	private volatile boolean running, paused;
 	private volatile float currentFrequency;
-	private static LinkedList<Clock> runningClocks;
+//	private static LinkedList<Clock> runningClocks;
 
 
-	static {
-		runningClocks = new LinkedList<Clock>();
-	}
+//	static {
+//		runningClocks = new LinkedList<Clock>();
+//	}
 	
 	
 
@@ -140,7 +140,7 @@ public class Clock implements Clockable {
 				}
 			});
 			clockThread.start();
-			runningClocks.add(this);
+//			runningClocks.add(this);
 		}
 	}
 
@@ -167,20 +167,21 @@ public class Clock implements Clockable {
 	public synchronized void stop() throws InterruptedException {
 		if(running) {
 			shutdown();
-			if (clockThread.isAlive())
-				clockThread.join();
+		}
+		if (clockThread.isAlive()) {
+			clockThread.join();
 		}
 	}
 	
-	/**
-	 * Shuts down any running clock and waits until they have been stopped. Calling this with no running Clock has no effect.
-	 * 
-	 * @throws InterruptedException
-	 */
-	public static void stopAll() throws InterruptedException {
-		Logger.gdL().logInfo("Stopping all running Clocks");
-		if (runningClocks.size() > 0) for (Clock c : runningClocks) c.stop();
-	}
+//	/**
+//	 * Shuts down any running clock and waits until they have been stopped. Calling this with no running Clock has no effect.
+//	 * 
+//	 * @throws InterruptedException
+//	 */
+//	public static void stopAll() throws InterruptedException {
+//		Logger.gdL().logInfo("Stopping all running Clocks");
+//		if (runningClocks.size() > 0) for (Clock c : runningClocks) c.stop();
+//	}
 	
 	/**
 	 * Shuts down the clock without waiting until has stopped. Calling this on a stopped clock has no effect.
@@ -189,16 +190,16 @@ public class Clock implements Clockable {
 		Logger.getDefaultLogger().log("Shutting down Clock with " + currentFrequency);
 		running = false;
 		if (paused) resume();
-		runningClocks.remove(this);
+//		runningClocks.remove(this);
 	}
 	
-	/**
-	 * Shuts down all the running clocks without waiting until they have stopped. Calling this with no active clock has no effect.
-	 */
-	public static void shutdownAll() {
-		Logger.gdL().logInfo("Shutting down all running Clocks");
-		if (runningClocks.size() > 0) for (Clock c : runningClocks) c.shutdown();
-	}
+//	/**
+//	 * Shuts down all the running clocks without waiting until they have stopped. Calling this with no active clock has no effect.
+//	 */
+//	public static void shutdownAll() {
+//		Logger.gdL().logInfo("Shutting down all running Clocks");
+//		if (runningClocks.size() > 0) for (Clock c : runningClocks) c.shutdown();
+//	}
 	
 	/**
 	 * Returns whether the clock is running.
@@ -226,14 +227,14 @@ public class Clock implements Clockable {
 		}
 	}
 	
-	/**
-	 * Returns an Array of all running Clocks.
-	 * 
-	 * @return Array of all running Clocks
-	 */
-	public static Clock[] getRunningClocks() {
-		return (Clock[]) runningClocks.toArray();
-	}
+//	/**
+//	 * Returns an Array of all running Clocks.
+//	 * 
+//	 * @return Array of all running Clocks
+//	 */
+//	public static Clock[] getRunningClocks() {
+//		return (Clock[]) runningClocks.toArray();
+//	}
 	
 	@Override
 	public void tick(long delta) {

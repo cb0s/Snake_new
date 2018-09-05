@@ -66,7 +66,7 @@ public class Game extends Clock {
 		Logger.gdL().logInfo("Setting up Game");
 		display = new Display(title, width, height, new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				stopGame();
+				stop();
 			}
 		});
 		Display.getRenderLogger().logInfo("Initializing Game-Loop");
@@ -108,15 +108,15 @@ public class Game extends Clock {
 	// * Public Methods *
 	// ******************
 
-	public void stopGame() {
-		Display.getRenderLogger().logInfo("Disposing Display");
-		getDisplay().dispose();
+	@Override
+	public void stop() {
+		this.stop();
 		try {
-			shutdownAll();
-			Logger.stopAll();
-		} catch (InterruptedException e1) {
-			Logger.gdL().logException(e1);
+			getDisplay().stop();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		getDisplay().dispose();
 		Logger.gdL().logInfo("Game stopped\n\n");
 		System.exit(0);
 	}

@@ -9,9 +9,10 @@ import utils.Maths;
 import utils.io.IniAdapter;
 import utils.io.Logger;
 import utils.io.PathsLoader;
+import utils.ui.DialogManager;
 
 /** 
- * 	@author Cedric	
+ * 	@author Cedric, Leo
  *	@version 1.1
  *	@category main</br></br>
  *
@@ -48,7 +49,7 @@ public class SnakeGame {
 			Logger.gdL().logInfo("SystemLookAndFeel successfully loaded");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			Logger.gdL().logError("Setting UILookAndFeel to SystemLookAndFeel failed!");
-			Logger.gdL().logExceptionGraphical(e, "An Error occured while loading the SystemLookAndFeel.\nThe UI may appear a bit different due to these Errors.\n\nError:\n%exception", "Warning", false);
+			DialogManager.showExeptionDialog(null, e, "An Error occured while loading the SystemLookAndFeel.\nThe UI may appear a bit different due to these Errors.\n\nError:\n%exception", "Warning", false);
 			Logger.gdL().logWarning("The UI may be a bit different to what you are used to");
 		}
 	}
@@ -74,7 +75,7 @@ public class SnakeGame {
 		} catch (Error | Exception e) {
 			try {
 				Logger.gdL().logError("A fatal error occured while running Snake! Error could not be identified!\nError:");
-				Logger.gdL().logExceptionGraphical(e, "A fatal error occured while running Snake! Error could not be identified!\n\nError:\n%exception%\n\nExiting", "Fatal Error!", true);
+				DialogManager.showExeptionDialog(null, e, "A fatal error occured while running Snake! Error could not be identified!\n\nError:\n%exception%\n\nExiting", "Fatal Error!", true);
 			} catch(Exception e2) {
 				System.err.println("FATAL ERROR! THIS COULD NOT BE LOGGED!");
 				e.printStackTrace();

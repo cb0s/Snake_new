@@ -166,6 +166,7 @@ public class Display extends Clock {
 	}
 	
 	public void dispose() {
+		renderLogger.logInfo("Disposing Display");
 		frame.dispose();
 	}
 	
