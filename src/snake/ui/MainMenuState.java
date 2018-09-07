@@ -61,7 +61,7 @@ public class MainMenuState extends State {
 		
 		stop = new Button(stopButtonResources, 515, 495, 250, 100);
 		stop.addActionListener(e -> {
-			game.stopGame();
+			game.stop();
 		});
 		
 		// END CREATE TILES

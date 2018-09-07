@@ -15,6 +15,8 @@ import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
+import utils.ui.DialogManager;
+
 // TODO: REWRITE INSTALLER! --> Add progress, add resume, ...
 /** 
  * 	@author Cedric	
@@ -138,7 +140,8 @@ public class Installer {
 						log(LoggingType.WARNING + " " + delFile.getAbsolutePath() + " deleted");
 					}
 					log(LoggingType.ERROR + " Installing failed! Exiting installer...");
-					String error = Logger.gdL().logExceptionGraphical(e, LangAdapter.getString("installer_failed"), LangAdapter.getString("installer_title_F"), false);
+					String error = Logger.gdL().logException(e);
+					DialogManager.showExeptionDialog(null, e, LangAdapter.getString("installer_failed"), LangAdapter.getString("installer_title_F"), false);
 					installationProcess.add("Error: " + error);
 				} finally {
 					try {

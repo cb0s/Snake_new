@@ -41,9 +41,9 @@ public class Game extends Clock {
 	// **********
 	private Display display;
 	
-	private State gameState;
-	private State mainMenu, menuOptions, loadGame;
-	private State gamePausedMenu;
+	private snake.State gameState;
+	private snake.State mainMenu, menuOptions, loadGame;
+	private snake.State gamePausedMenu;
 
 	private KeyManager keyManager;
 	private MouseManager mouseListener;
@@ -66,7 +66,7 @@ public class Game extends Clock {
 		Logger.gdL().logInfo("Setting up Game");
 		display = new Display(title, width, height, new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				stop();
+				shutdown();
 			}
 		});
 		Display.getRenderLogger().logInfo("Initializing Game-Loop");
@@ -77,7 +77,7 @@ public class Game extends Clock {
 		loadGame = new LoadGameState(this);
 		// Create other States
 		
-		State.setState(mainMenu);
+		snake.State.setState(mainMenu);
 
 		Display.getRenderLogger().logInfo("Setting up Key-Listener");
 		keyManager = new KeyManager();
@@ -109,10 +109,12 @@ public class Game extends Clock {
 	// ******************
 
 	@Override
-	public void stop() {
-		this.stop();
+	public void shutdown() {
 		try {
-			getDisplay().stop();
+			super.shutdown();
+			super.join();
+			getDisplay().shutdown();
+			getDisplay().join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -121,23 +123,23 @@ public class Game extends Clock {
 		System.exit(0);
 	}
 	
-	public State getGameState() {
+	public snake.State getGameState() {
 		return gameState;
 	}
 
-	public State getMainMenu() {
+	public snake.State getMainMenu() {
 		return mainMenu;
 	}
 
-	public State getMenuOptions() {
+	public snake.State getMenuOptions() {
 		return menuOptions;
 	}
 
-	public State getLoadGame() {
+	public snake.State getLoadGame() {
 		return loadGame;
 	}
 
-	public State getGamePausedMenu() {
+	public snake.State getGamePausedMenu() {
 		return gamePausedMenu;
 	}
 
@@ -146,7 +148,7 @@ public class Game extends Clock {
 	}
 	
 	@Override
-	public void tick(long delta) {
+	public void tick(float delta) {
 //		float tickVariance = ((float) delta) / 1000000000.0f;
 		//example for letting entities wander 1 px right every second, accounting that the time between tick calls may vary.
 		for(Entity e : entities) {

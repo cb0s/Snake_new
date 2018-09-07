@@ -7,24 +7,26 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import utils.mechanics.Clock;
+import utils.mechanics.Clockable;
+
 /**
- * Lets you log text and Exceptions asynchronously with timestamp and optional prefix.</br></br>
+ * Lets you log text and exceptions asynchronously with timestamp and optional prefix.</br></br>
  * 
  * <b>Use:</b> Instantiate a new logger or use the standard logger {@link #getDefaultLogger()}.<br>
  * There are multiple prebuilt methods for logging:<ul>
  * <li>{@link #log(String)} for plain logging</li>
  * <li>{@link #logInfo(String)} for logging information</li>
- * <li>{@link #logWarning} for logging warnings</li>
- * <li>{@link #logError} for logging errors</li>
+ * <li>{@link #logWarning(String)} for logging warnings</li>
+ * <li>{@link #logError(String)} for logging errors</li>
  * <li>{@link #logException(Exception)} for logging Exceptions</li>
- * <li>{@link #logExceptionGraphical(Exception, String, String, boolean)} for logging Exceptions and show them in a TextBox on the screen</li>
  * </ul>
  * 
  * @author Leo, Cedric
  * @version 3.2
  * @category util
  */
-public class Logger {
+public class Logger extends Clock {
 
 	// *************
 	// * Constants *
@@ -33,34 +35,29 @@ public class Logger {
 	private static final String PREFIX_WARNING = "[Warning] ";
 	private static final String PREFIX_ERROR = "[Error] ";
 	
-	
+	private static final String POISON_PILL = new String();
+
+
 	public static final String DEAFAULT_DATE_TIME_PATTERN = "dd/MM/yyyy-HH:mm:ss";
-	
-	
 
 
-	
+
+
 	// **********
 	// * Fields *
 	// **********
 	private static Logger defaultLogger;
-	
-	
-	
+
+
 	private final String PREFIX;
 	private final SimpleDateFormat simpleDateFormat;
-	
+	private final PrintWriter[] outputs;
+
 	private LinkedBlockingQueue<String> buffer;
-	private Thread worker;
-	private volatile boolean running;
 
 
-	
-	
-	
-	
-	
-	
+
+
 	// ****************
 	// * Constructors *
 	// ****************
@@ -141,7 +138,7 @@ public class Logger {
 	public Logger(OutputStream[] outputs, String prefix) {
 		this(DEAFAULT_DATE_TIME_PATTERN, outputs, prefix);
 	}
-	
+
 	/**
 	 * Creates a new logger using: <ul>
 	 * <li>the given date-time pattern</li>
@@ -155,7 +152,7 @@ public class Logger {
 	public Logger(String dateTimePattern, OutputStream[] outputs) {
 		this(dateTimePattern, outputs, null);
 	}
-	
+
 	/**
 	 * Creates a new logger using: <ul>
 	 * <li>the given date-time pattern</li>
@@ -169,23 +166,29 @@ public class Logger {
 	 * @param prefix the prefix in front of every log
 	 */
 	public Logger(String dateTimePattern, OutputStream[] outputs, String prefix) {
+		super(0);
 		if(dateTimePattern == null || outputs == null || prefix == null) {
 			throw new NullPointerException("Arguments must not be null!");
 		}
-		this.PREFIX = prefix + " ";
+		this.PREFIX = prefix + ' ';
 		this.simpleDateFormat = new SimpleDateFormat(dateTimePattern);
-		buffer = new LinkedBlockingQueue<>();
-		this.worker = new Thread(new LoggerWorker(buffer, Arrays.stream(outputs).map(PrintWriter::new).toArray(PrintWriter[]::new)));
-		this.worker.setDaemon(true);
-		this.worker.start();
-		running = true;
-		this.log("----------------------------new-Session-started----------------------------\n");
+		this.outputs = Arrays.stream(outputs).map(PrintWriter::new).toArray(PrintWriter[]::new);
+		this.buffer = new LinkedBlockingQueue<>();
+		this.setDaemon(true);
+		this.start();
 	}
 
-	
-	
-	
-	
+
+	//Make unwanted Clock constructors invisible
+	@SuppressWarnings("unused")
+	private Logger(float f) {
+		this();
+	};
+	@SuppressWarnings("unused")
+	private Logger(Clockable c, float f) {
+		this();
+	}
+
 
 
 
@@ -198,9 +201,6 @@ public class Logger {
 	 * @param text the text to log
 	 */
 	public synchronized void log(String text) {
-		if(!running) {
-			throw new IllegalStateException("Logger is not running anymore!");
-		}
 		buffer.add("["+getTime()+"] " + PREFIX + text);
 	}
 
@@ -244,7 +244,7 @@ public class Logger {
 		logError(exMsg);
 		return exMsg;
 	}
-	
+
 	/**
 	 * Returns the current date-time parsed in this logger's pattern.
 	 * 
@@ -254,36 +254,44 @@ public class Logger {
 		return simpleDateFormat.format(new GregorianCalendar().getTime());
 	}
 
-	public synchronized boolean isRunning() {
-		return running;
-	}
-	
 	/**
-	 * Shuts down the logger without waiting until it has stopped. Calling this on a stopped logger has no effect.
+	 * Starts or restarts this logger and logs that a new session started. Calling this on a running clock has no effect.
 	 */
-	public synchronized void shutdown() {
-		this.log("----------------------------Session-ended----------------------------\n");
-		running = false;
-		buffer.add(null);
+	public synchronized void start() {
+		if(!isRunning()) {
+			super.start();
+			this.log("----------------------------new-Session-started----------------------------");
+		}
 	}
 
 	/**
-	 * Shuts down the logger and waits until it has stopped. Calling this on a stopped logger has no effect.
-	 * 
-	 * @throws InterruptedException
+	 * Shuts down the logger. The logger will continue running until all entries made until this point are logged!<br>
+	 * Calling this on a stopped logger has no effect.
 	 */
-	public synchronized void stop() throws InterruptedException {
-		if (running) {
-			shutdown();
-		}
-		if (worker.isAlive()) {
-			worker.join();
+	public synchronized void shutdown() {
+		if(isRunning()) {
+			this.log("----------------------------Session-ended----------------------------");
+			buffer.add(POISON_PILL);
 		}
 	}
-	
-	
-	
-	
+
+	public void tick(float delta) {
+		try {
+			String message = buffer.take();
+			if(message == POISON_PILL) {
+				super.shutdown();
+				return;
+			}
+			for(PrintWriter pw : outputs) {
+				pw.println(message);
+				pw.flush();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	/**
 	 * Returns the default logger.
 	 * 
@@ -312,54 +320,5 @@ public class Logger {
 	public static synchronized void setDefaultLogger(Logger logger) {
 		Logger.defaultLogger = logger;
 	}
-
-//	public static void shutdownAll() {
-//		defaultLogger.logInfo("Shutting down all Loggers");
-//		for (Logger l : runningThreads) l.shutdown();
-//	}
-
-//	/**
-//	 * Stops all custom loggers.
-//	 */
-//	public static void stopAll() throws InterruptedException {
-//		defaultLogger.logInfo("Stopping all Loggers");
-//		for (Logger l : runningThreads) l.stop();
-//	}
 	
-	
-	
-	
-	
-	
-	
-	// *****************
-	// * Inner classes *
-	// *****************
-	private class LoggerWorker implements Runnable {
-		private LinkedBlockingQueue<String> buffer;
-		private final PrintWriter[] outputs;
-		
-		public LoggerWorker(LinkedBlockingQueue<String> buffer, PrintWriter[] outputs) {
-			this.buffer = buffer;
-			this.outputs = outputs;
-		}
-
-		@Override
-		public void run() {
-			while(true) {
-				try {
-					String message = buffer.take();
-					if(message == null) {
-						break;
-					}
-					for(PrintWriter pw : outputs) {
-						pw.println(message);
-						pw.flush();
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 }
