@@ -9,6 +9,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import utils.ui.DialogManager;
+
 /** 
  * 	@author Cedric	
  *	@version 1.0
@@ -46,7 +48,8 @@ public class ImageLoader {
 				return ImageIO.read(ImageLoader.class.getResource("/" + path));
 		} catch (Exception e) {
 			Logger.gdL().log("An error occured while loading image \"" + path + "\"!");
-			Logger.gdL().logExceptionGraphical(e, "An Error occured while loading image \"" + path + "\"\n\nError:\n%exception%\n\nExiting now!", "IO-Error", true);
+			Logger.gdL().logException(e);
+			DialogManager.showExeptionDialog(null, e, "An Error occured while loading image \"" + path + "\"\n\nError:\n%exception%\n\nExiting now!", "IO-Error", true);
 		}
 		return null;
 	}

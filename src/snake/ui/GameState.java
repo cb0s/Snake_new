@@ -14,7 +14,8 @@ public class GameState extends State {
 	
 	@Override
 	public void update() {
-		game.resume();
+		//TODO: change, now that resume doesen't exist anymore
+		//game.resume();
 		super.update();
 	}
 

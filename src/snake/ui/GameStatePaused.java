@@ -23,7 +23,8 @@ public class GameStatePaused extends State {
 	@Override
 	public void onSet() {
 		Logger.getDefaultLogger().logInfo("Pausing game");
-		game.pause();
+		//TODO: change, now that pause doesen't exist anymore
+		//game.pause();
 		BufferedImage img = ImageLoader.applyGaussian(display.getNextRenderedImage(), 25);
 		display.setNextRenderingImage(img);
 

@@ -166,6 +166,7 @@ public class Display extends Clock {
 	}
 	
 	public void dispose() {
+		renderLogger.logInfo("Disposing Display");
 		frame.dispose();
 	}
 	
@@ -240,7 +241,7 @@ public class Display extends Clock {
 	 * Updates the next Image
 	 */
 	@Override
-	public void tick(long delta) {
+	public void tick(float delta) {
 		if (nextImageRendered) {
 			nextImageRendered = false;
 		} else {
@@ -265,7 +266,7 @@ public class Display extends Clock {
 			
 			g.dispose();
 		}
-		State.getState().update();
+		snake.State.getState().update();
 	}
 	
 	/**
@@ -279,7 +280,7 @@ public class Display extends Clock {
 		
 		g.drawImage(nextImage, 0, 0, nextImage.getWidth(), nextImage.getHeight(), 0, 0, nextImage.getWidth(), nextImage.getHeight(), null);
 		
-		State.getState().render(g);
+		snake.State.getState().render(g);
 		
 		bs.show();
 		g.dispose();

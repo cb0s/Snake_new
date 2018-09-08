@@ -10,12 +10,12 @@ package utils.mechanics;
 public interface Clockable {
 	
 	/**
-	 * Method to be periodically called by a Clock. Recieves the time elapsed since the last call in nano seconds.
+	 * Method to be periodically called by a Clock. Recieves the time elapsed since the last call in seconds.
 	 * 
-	 * @param delta time since last call in nano seconds
+	 * @param delta time since last call in seconds
 	 * 
 	 * @see Clock
 	 */
-	public void tick(long delta);
+	public void tick(float delta);
 
 }

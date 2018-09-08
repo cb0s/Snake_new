@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import utils.ui.DialogManager;
+
 /** 
  * 	@author Cedric	
  *	@version 2.0
@@ -60,7 +62,8 @@ public class IniAdapter {
 			return true;
 		} catch (IOException e) {
 			Logger.getDefaultLogger().logError("Loading " + path + " failed!");
-			Logger.gdL().logExceptionGraphical(e, "Error while loading " + path + "!\n\nError:\n%exception%\n\nExiting", "IO-Error", true);
+			Logger.gdL().logException(e);
+			DialogManager.showExeptionDialog(null, e, "Error while loading " + path + "!\n\nError:\n%exception%\n\nExiting", "IO-Error", true);
 			return false;
 		}
 	}
