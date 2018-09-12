@@ -16,7 +16,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.JFrame;
 
-import snake.State;
 import snake.ui.entity.Entity;
 import snake.ui.tiles.Tile;
 import utils.io.Logger;
@@ -212,7 +211,6 @@ public class Display extends Clock {
 	public void addDisplayElement(DisplayElement displayElement) {
 		if (displayElement instanceof Entity) entities.add((Entity) displayElement);
 		else tiles.add((Tile) displayElement);
-		System.out.println(tiles.toArray()[tiles.size()-1]);
 	}
 	
 	public boolean removeDisplayElement(DisplayElement displayElement) {

@@ -111,6 +111,7 @@ public class Game extends Clock {
 	@Override
 	public void shutdown() {
 		try {
+			getDisplay().dispose();
 			super.shutdown();
 			super.join();
 			getDisplay().shutdown();

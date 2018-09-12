@@ -201,7 +201,7 @@ public class Logger extends Clock {
 	 * @param text the text to log
 	 */
 	public synchronized void log(String text) {
-		buffer.add("["+getTime()+"] " + PREFIX + text);
+		buffer.add("["+getTime()+"] " + (PREFIX.equals(" ") ? "" : PREFIX) + text);
 	}
 
 	/**
