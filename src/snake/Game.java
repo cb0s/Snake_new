@@ -3,16 +3,9 @@ package snake;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.concurrent.CopyOnWriteArraySet;
-
 import snake.ui.Display;
-import snake.ui.GameState;
-import snake.ui.LoadGameState;
-import snake.ui.MainMenuState;
-import snake.ui.MenuOptionsState;
-import snake.ui.entity.Entity;
+import snake.ui.states.*;
 import utils.io.Logger;
-import utils.mechanics.Clock;
 import utils.ui.KeyManager;
 import utils.ui.MouseManager;
 
@@ -26,30 +19,28 @@ import utils.ui.MouseManager;
  * It already handles a lot by default so you don't need to do everything on your own.
  *
  */
-public class Game extends Clock {
+public class Game {
 
-	// *************
-	// * Constants *
-	// *************
-	/**
-	 * The rate, at which the elements in the game change their position or state.
-	 */
-	private static final float DEFAULT_TICKS_PER_SECOND = 1.0f;
-	
 	// **********
 	// * Fields *
 	// **********
 	private Display display;
 	
-	private snake.State gameState;
-	private snake.State mainMenu, menuOptions, loadGame;
-	private snake.State gamePausedMenu;
+	private GameState gameState;
+	private MainMenuState mainMenu;
+	private MenuOptionsState menuOptions;
+	private LoadGameState loadGame;
+	private GameStatePaused gamePausedMenu;
 
 	private KeyManager keyManager;
 	private MouseManager mouseListener;
 	
-	private CopyOnWriteArraySet<Entity> entities;
-
+	
+	
+	
+	
+	
+	
 	
 	// ****************
 	// * Constructors *
@@ -61,101 +52,54 @@ public class Game extends Clock {
 	 * @param width The width of the Game
 	 * @param height The height of the Game
 	 */
-	public Game(String title, int width, int height) {
-		super(DEFAULT_TICKS_PER_SECOND);
+	public Game(String title) {
 		Logger.gdL().logInfo("Setting up Game");
-		display = new Display(title, width, height, new WindowAdapter() {
+		display = new Display(title);
+		display.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				shutdown();
 			}
 		});
-		Display.getRenderLogger().logInfo("Initializing Game-Loop");
-		Display.getRenderLogger().logInfo("Creating States");
 		gameState = new GameState(this);
 		mainMenu = new MainMenuState(this);
 		menuOptions = new MenuOptionsState(this);
 		loadGame = new LoadGameState(this);
 		// Create other States
 		
-		snake.State.setState(mainMenu);
+		display.setCurrentState(mainMenu);
 
-		Display.getRenderLogger().logInfo("Setting up Key-Listener");
 		keyManager = new KeyManager();
 		keyManager.addKeyToListener(KeyEvent.VK_ESCAPE);
 		keyManager.addKeyToListener(KeyEvent.VK_F1);
-		Display.getRenderLogger().logInfo("Adding Key-Listener");
 		display.addKeyListener(keyManager);
 		
 		mouseListener = new MouseManager();
-		Display.getRenderLogger().logInfo("Adding Mouse-Listener");
 		display.addMouseListener(mouseListener);
 
-		entities = new CopyOnWriteArraySet<>();
-		
 		display.setVisible(true);
-		display.start();
 		Logger.gdL().logInfo("Game successfully started");
 	}
 	
 	
 	
-	// *******************
-	// * Private Methods *
-	// *******************
+	
+	
+	
 	
 	
 	// ******************
 	// * Public Methods *
 	// ******************
-
-	@Override
 	public void shutdown() {
 		try {
-			getDisplay().dispose();
-			super.shutdown();
-			super.join();
-			getDisplay().shutdown();
-			getDisplay().join();
+			display.shutdown();
+			display.join();
+			display.dispose();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		getDisplay().dispose();
 		Logger.gdL().logInfo("Game stopped\n\n");
 		System.exit(0);
-	}
-	
-	public snake.State getGameState() {
-		return gameState;
-	}
-
-	public snake.State getMainMenu() {
-		return mainMenu;
-	}
-
-	public snake.State getMenuOptions() {
-		return menuOptions;
-	}
-
-	public snake.State getLoadGame() {
-		return loadGame;
-	}
-
-	public snake.State getGamePausedMenu() {
-		return gamePausedMenu;
-	}
-
-	public Display getDisplay() {
-		return display;
-	}
-	
-	@Override
-	public void tick(float delta) {
-//		float tickVariance = ((float) delta) / 1000000000.0f;
-		//example for letting entities wander 1 px right every second, accounting that the time between tick calls may vary.
-		for(Entity e : entities) {
-			e.update();
-//			e.setLocation((int)(e.getX() + (1.0f * tickVariance)), (int)e.getY());
-		}
 	}
 	
 }

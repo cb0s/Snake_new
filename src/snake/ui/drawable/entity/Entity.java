@@ -1,13 +1,13 @@
-package snake.ui.entity;
+package snake.ui.drawable.entity;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import snake.ui.DisplayElement;
+import snake.ui.drawable.Drawable;
 
 @SuppressWarnings("serial")
-public abstract class Entity extends DisplayElement {
+public abstract class Entity extends Drawable {
 	
 	/**
 	 * Whether an Entity is on the Field or not

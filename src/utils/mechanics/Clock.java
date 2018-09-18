@@ -121,8 +121,9 @@ public class Clock extends Thread implements Clockable {
 	}
 
 	/**
-	 * Shuts down the clock without waiting until has stopped. Calling this on a stopped clock has no effect.<br>
-	 * Note that {@link #isRunning()} will return false, even if the execution of the current tick has not finished yet.
+	 * Shuts down this clock without waiting until it has stopped. Calling this on a stopped clock has no effect.<br>
+	 * Note that {@link #isRunning()} will return false, even if the execution of the current tick has not finished yet.<br>
+	 * Use {@link #isAlive()} for this matter.
 	 */
 	public synchronized void shutdown() {
 		running = false;

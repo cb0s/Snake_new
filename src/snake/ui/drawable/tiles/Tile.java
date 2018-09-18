@@ -1,12 +1,12 @@
-package snake.ui.tiles;
+package snake.ui.drawable.tiles;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import snake.ui.DisplayElement;
+import snake.ui.drawable.Drawable;
 
 @SuppressWarnings("serial")
-public abstract class Tile extends DisplayElement {
+public abstract class Tile extends Drawable {
 	
 	// NOT IMPLEMENTED YET
 	public Tile(BufferedImage resource, float xRatio, float yRatio, float widthRatio, float heightRatio) throws NoSuchMethodError {
