@@ -1,11 +1,8 @@
 package snake;
 
-import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import snake.ui.MainMenuState;
-import utils.Maths;
 import utils.io.IniAdapter;
 import utils.io.Logger;
 import utils.io.PathsLoader;
@@ -22,6 +19,10 @@ import utils.ui.DialogManager;
  **/
 
 public class SnakeGame {
+	
+	public static final String TITLE = "Snake";
+	
+	
 
 	private static IniAdapter guiIni;
 	private static Game snake;
@@ -70,7 +71,7 @@ public class SnakeGame {
 			guiIni = new IniAdapter(PathsLoader.getSavedPath("gui_ini"));
 			initGraphics();
 			
-			snake = new Game(MainMenuState.mainMenuIni.getString("title"), (int) Maths.format(guiIni.getString("width").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().width+"")), (int) Maths.format(guiIni.getString("height").replace("%screensize%", Toolkit.getDefaultToolkit().getScreenSize().height+"")));
+			snake = new Game(TITLE);
 		
 		} catch (Error | Exception e) {
 			try {

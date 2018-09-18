@@ -1,11 +1,15 @@
-package snake.ui;
+package snake.ui.drawable;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+/**
+ * @author leo
+ *
+ */
 @SuppressWarnings("serial")
-public abstract class DisplayElement extends Rectangle {
+public abstract class Drawable extends Rectangle {
 
 	protected BufferedImage resource;
 	
@@ -19,8 +23,11 @@ public abstract class DisplayElement extends Rectangle {
 	 * @param height
 	 * @throws NoSuchMethodError
 	 */
-	public DisplayElement(BufferedImage resource, float x, float y, float width, float height) throws NoSuchMethodError {
-		if (resource == null) Display.getRenderLogger().logWarning("A Sprite with no was created");
+	public Drawable(BufferedImage resource, float x, float y, float width, float height) throws NoSuchMethodError {
+		if (resource == null) {
+			//TODO: Change
+			//Display.getRenderLogger().logWarning("A Sprite with no was created");
+		}
 		this.resource = resource;
 		/*
 		Display display = Game.getDisplay();
@@ -31,12 +38,10 @@ public abstract class DisplayElement extends Rectangle {
 		throw new NoSuchMethodError("This Constructor is not implemented yet!");
 	}
 
-	public DisplayElement(BufferedImage resource, int x, int y, int width, int height) {
+	public Drawable(BufferedImage resource, int x, int y, int width, int height) {
 		super(x, y, width, height);
 		this.resource = resource;
 	}
-	
-	public abstract void update();
 	
 	public abstract void render(Graphics2D g);
 	

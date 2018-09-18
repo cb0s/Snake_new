@@ -170,7 +170,7 @@ public class Logger extends Clock {
 		if(dateTimePattern == null || outputs == null || prefix == null) {
 			throw new NullPointerException("Arguments must not be null!");
 		}
-		this.PREFIX = prefix + ' ';
+		this.PREFIX = (prefix.equals("") || prefix.endsWith(" ")) ? prefix : prefix + ' ';
 		this.simpleDateFormat = new SimpleDateFormat(dateTimePattern);
 		this.outputs = Arrays.stream(outputs).map(PrintWriter::new).toArray(PrintWriter[]::new);
 		this.buffer = new LinkedBlockingQueue<>();
@@ -201,7 +201,7 @@ public class Logger extends Clock {
 	 * @param text the text to log
 	 */
 	public synchronized void log(String text) {
-		buffer.add("["+getTime()+"] " + (PREFIX.equals(" ") ? "" : PREFIX) + text);
+		buffer.add("["+getTime()+"] " + PREFIX + text);
 	}
 
 	/**
