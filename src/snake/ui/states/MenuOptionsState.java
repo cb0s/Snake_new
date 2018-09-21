@@ -1,16 +1,18 @@
-package snake.ui;
+package snake.ui.states;
+
+import java.awt.Graphics2D;
 
 import snake.Game;
-import snake.State;
 
 public class MenuOptionsState extends State {
 
-	public MenuOptionsState(Game game) {
-		super(game, "Menu-Options");
+	public MenuOptionsState(Game parent) {
+		super(parent);
 	}
 
 	@Override
-	public void onSet() {
+	public void render(Graphics2D g) {
+		// TODO Auto-generated method stub
 		
 	}
 

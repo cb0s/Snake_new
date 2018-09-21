@@ -1,4 +1,4 @@
-package utils.ui;
+package snake.ui;
 
 import java.awt.Component;
 

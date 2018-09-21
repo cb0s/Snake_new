@@ -1,4 +1,4 @@
-package utils.io;
+package snake.io;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import utils.mechanics.Clock;
-import utils.mechanics.Clockable;
+import snake.mechanics.Clock;
+import snake.mechanics.Clockable;
 
 /**
  * Lets you log text and exceptions asynchronously with timestamp and optional prefix.</br></br>

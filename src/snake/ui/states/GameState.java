@@ -1,30 +1,19 @@
-package snake.ui;
+package snake.ui.states;
 
 import java.awt.Graphics2D;
 
 import snake.Game;
-import snake.State;
 
 public class GameState extends State {
 
-	public GameState(Game game) {
-		super(game, "Game");
-	}
-	
-	@Override
-	public void update() {
-		//TODO: change, now that resume doesen't exist anymore
-		//game.resume();
-		super.update();
+	public GameState(Game parent) {
+		super(parent);
 	}
 
 	@Override
 	public void render(Graphics2D g) {
-
-	}
-
-	@Override
-	public void onSet() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

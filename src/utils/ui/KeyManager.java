@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import snake.ui.Display;
+import utils.io.Logger;
 
 /**
  * 
@@ -86,12 +87,12 @@ public class KeyManager implements KeyListener {
 	
 	// Typed Keys
 	public void addKeyToListener(int i) {
-		Display.getRenderLogger().logInfo("KeyListener for key " + i + " added");
+		Logger.gdL().logInfo("KeyListener for key " + i + " added");
 		listenTypedKeys.add(new Integer(i));
 	}
 	
 	public boolean removeKeyFromListener(int i) {
-		Display.getRenderLogger().logInfo("Trying to remove KeyListener for key " + i); // Update this line of code for independent use of Game
+		Logger.gdL().logInfo("Trying to remove KeyListener for key " + i); // Update this line of code for independent use of Game
 		return listenTypedKeys.remove(new Integer(i));
 	}
 	
