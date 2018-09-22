@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import utils.ui.DialogManager;
+import snake.io.Logger;
+import snake.ui.DialogManager;
 
 /**
  * 

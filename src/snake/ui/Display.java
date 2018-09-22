@@ -1,6 +1,7 @@
 package snake.ui;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -19,10 +20,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.JFrame;
 
+import snake.GameConfig;
+import snake.io.Logger;
+import snake.mechanics.Clock;
+import snake.mechanics.Clockable;
 import snake.ui.states.State;
-import utils.io.Logger;
-import utils.mechanics.Clock;
-import utils.mechanics.Clockable;
 import utils.ui.MouseManager;
 
 /**
@@ -35,35 +37,15 @@ import utils.ui.MouseManager;
 @SuppressWarnings({"serial","unused"})
 public class Display extends JFrame {
 
-	// *************
-	// * Constants *
-	// *************
-	private static final float DEFAULT_FPS = 60.0f;
-	private static final int DEFAULT_WIDTH = 1280;
-	private static final int DEFAULT_HEIGHT = 720;
-	
-	private static final int DEFAULT_BUFFER_SIZE = 3;
-	private static final String RENDER_LOGGER_OUTPUT_FILE = "render.log";
-
-
-
-
-
-
-
-
-	// ******************
-	// * Private Fields *
-	// ******************
+	// **********
+	// * Fields *
+	// **********
 	private Canvas canvas;
 	private volatile State currentState;
 	private final float renderPeriod;
-	private Clock renderWorker;
+	private final Clockable renderWorker;
+	private Clock renderWorkerClock;
 	private Logger renderLogger;
-
-
-
-
 
 
 
@@ -73,52 +55,44 @@ public class Display extends JFrame {
 	// ****************
 
 	//Overriding inherited constructors
-	private Display(GraphicsConfiguration gc) {this();}
-	private Display(String title, GraphicsConfiguration gc) {this();}
+	private Display() {this(new GameConfig());}
+	private Display(String title) {this(new GameConfig());}
+	private Display(GraphicsConfiguration gc) {this(new GameConfig());}
+	private Display(String title, GraphicsConfiguration gc) {this(new GameConfig());}
 
-
-	public Display() {
-		this("", DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FPS);
-	}
-
-	public Display(String title) {
-		this(title, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FPS);
-	}
 
 
 	//New constructors
-	public Display(String title, int width, int height) {
-		this(title, width, height, DEFAULT_FPS);
-	}
-
-	public Display(String title, int width, int height, float fps) {
-		super(title);
-		Logger.gdL().logInfo("Creating Display with title \"" + title + "\"");
+	public Display(GameConfig config) {
+		super(config.title);
+		Logger.gdL().logInfo("Creating Display with title \"" + config.title + "\"");
 		try {
-			renderLogger = new Logger(new OutputStream[] {System.out, new FileOutputStream(RENDER_LOGGER_OUTPUT_FILE)}, "[Render]");
+			renderLogger = new Logger(new OutputStream[] {System.out, new FileOutputStream(config.renderLogfile)}, "[Render]");
 		} catch (FileNotFoundException e) {
 			Logger.gdL().logException(e);
 			renderLogger = Logger.gdL();
 		}
 
+		//setUndecorated(true);
 		canvas = new Canvas();
 		canvas.setFocusable(false);
+		//canvas.setBackground(Color.BLACK);
 
-		setSize(width, height);
-		setResizable(false);
+		setSize(config.width, config.height);
+		setResizable(config.resizable);
+		setUndecorated(config.undecorated);
 
 		add(canvas);
+		pack();
 		center();
 
 		renderLogger.logInfo("Creating BufferStrategy");
-		canvas.createBufferStrategy(DEFAULT_BUFFER_SIZE);
-
-		renderPeriod = 1.0f/fps;
+		canvas.createBufferStrategy(config.bufferSize);
+		
+		renderWorker = new RenderWorker();
+		
+		renderPeriod = 1.0f/config.fps;
 	}
-
-
-
-
 
 
 
@@ -131,18 +105,6 @@ public class Display extends JFrame {
 	 */
 	public void center() {
 		setLocationRelativeTo(null);
-	}
-
-	/**
-	 * Adds a {@link MouseManager} (a combination of {@link MouseListener} and {@link MouseMotionListener}) to this Display.
-	 * 
-	 * @param manager the MouseManager to add
-	 */
-	public void addMouseManager(MouseManager manager) {
-		renderLogger.logInfo("Adding Mouse-Manager");
-		super.addMouseListener(manager);
-		canvas.addMouseListener(manager);
-		canvas.addMouseMotionListener(manager);
 	}
 
 	@Override
@@ -163,9 +125,17 @@ public class Display extends JFrame {
 	public void setCurrentState(State newState) {
 		if(currentState != null) {
 			currentState.onDetach();
+			super.removeKeyListener(currentState);
+			super.removeMouseListener(currentState);
+			canvas.removeMouseListener(currentState);
+			canvas.removeMouseMotionListener(currentState);
 		}
 		if(newState != null) {
 			newState.onApply();
+			super.addKeyListener(newState);
+			super.addMouseListener(newState);
+			canvas.addMouseListener(newState);
+			canvas.addMouseMotionListener(newState);
 		}
 		currentState = newState;
 	}
@@ -200,35 +170,16 @@ public class Display extends JFrame {
 	public synchronized void setVisible(boolean b) {
 		if(b && !isVisible()) {
 			renderLogger.logInfo("Initializing Render-Worker");
-			renderWorker = new Clock(new Clockable() {
-				BufferStrategy bs;
-				Graphics2D g;
-				@Override
-				public void tick(float delta) {
-					//Preparation
-					bs = canvas.getBufferStrategy();
-					g = (Graphics2D) bs.getDrawGraphics();
-
-					//Clear canvas
-					g.clearRect(0, 0, getSize().width, getSize().height);
-
-					//Draw current State on canvas
-					if(currentState != null) {
-						currentState.render(g);
-					}
-
-					//Cleanup
-					bs.show();
-					g.dispose();
-				}
-			}, renderPeriod);
+			renderWorkerClock = new Clock(renderWorker, renderPeriod);
+			renderWorker.tick(0);
+			renderWorker.tick(0);
 			renderLogger.logInfo("Making Display visible");
 			super.setVisible(true);
 			renderLogger.logInfo("Starting Render-Worker");
-			renderWorker.start();
+			renderWorkerClock.start();
 		} else if(!b && isVisible()) {
 			renderLogger.logInfo("Stopping Render-Worker");
-			renderWorker.shutdown();
+			renderWorkerClock.shutdown();
 			renderLogger.logInfo("Making Display invisible");
 			super.setVisible(false);
 		}
@@ -244,6 +195,7 @@ public class Display extends JFrame {
 			renderLogger.shutdown();
 		}
 		setVisible(false);
+		setCurrentState(null);
 	}
 
 	/**
@@ -258,7 +210,37 @@ public class Display extends JFrame {
 		if(!renderLogger.isRunning()) {
 			renderLogger.join();
 		}
-		renderWorker.join();
+		renderWorkerClock.join();
+	}
+
+
+
+
+	// *****************
+	// * Inner classes *
+	// *****************
+	public class RenderWorker implements Clockable {
+		BufferStrategy bs;
+		Graphics2D g;
+		
+		@Override
+		public void tick(float delta) {
+			//Preparation
+			bs = canvas.getBufferStrategy();
+			g = (Graphics2D) bs.getDrawGraphics();
+
+			//Clear canvas
+			g.clearRect(0, 0, getSize().width, getSize().height);
+
+			//Draw current State on canvas
+			if(currentState != null) {
+				currentState.render(g);
+			}
+
+			//Cleanup
+			bs.show();
+			g.dispose();
+		}
 	}
 
 }

@@ -1,4 +1,4 @@
-package utils.mechanics;
+package snake.mechanics;
 
 /**
  * A clock periodically calls a {@link Clockable} with a preferably fixed frequency and keeps track of the actual current frequency.

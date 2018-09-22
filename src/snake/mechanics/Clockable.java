@@ -1,4 +1,4 @@
-package utils.mechanics;
+package snake.mechanics;
 
 /**
  * An interface defining an object that can be passed to a {@link Clock} to be periodically called.
