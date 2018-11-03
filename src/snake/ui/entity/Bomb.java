@@ -15,8 +15,17 @@ public class Bomb extends Item {
 	private BufferedImage resourceExplode;
 	private BufferedImage resourceToRender;
 	
-	public Bomb(BufferedImage resource, BufferedImage resourceExplode, int x, int y, int width, int height, int tickTime) {
-		super (resource, x, y, width, height);
+	/**
+	 * Number of updates until the bomb explodes
+	 */
+	public final static int DEFAULT_TICKTIME;
+	
+	static {
+		DEFAULT_TICKTIME = Integer.parseInt(ITEM_INI.getString("bomb_ticktime"));
+	}
+	
+	public Bomb(BufferedImage resource, BufferedImage resourceExplode, int x, int y, int tickTime) {
+		super (resource, x, y, resource.getWidth(), resource.getHeight());
 		this.tickTime = tickTime;
 		this.timePassed = 0;
 		this.tick = false;

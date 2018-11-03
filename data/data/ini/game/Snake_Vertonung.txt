@@ -1,0 +1,35 @@
+Sounddesign Planung Snake:
+
+Töne:
+ Nicht In-Game:
+  - Button-Click
+  - Error (?)
+  - Tasteneingaben, falls erforderlich (?)
+ In-Game:
+  - Snake frisst
+  - Snake spawnt
+  - Snake-Teile spawnen
+  - Früchte spawnen
+  - Snake Geräusche auch so (?)
+  - Snake sterben
+  - Bombe spawnt
+  - Bombe tickt
+  - Bombe explodiert
+  - Früchte Despawnen (?)
+  - Level Change
+  - Game Over
+  - Game Pause
+  - Highscore (?)
+
+Musik:
+ Nicht In-Game:
+  - Leise Hintergrundmusik --> soll so sein, dass sie ein Leitmotiv hat, welches sich dynamisch unendlich oft wiederholen lässt und in
+    Musikteile überführen lässt
+  - Verschiedene Teile, die sich überführen lassen
+  - Bei Menü-Wechsel Neubeginn
+  - Entspannend, nicht aufregend, reibend (evtl. Halloween-Special Musik ;))
+ In-Game:
+  - Je nach Level entspannter, nicht entspannt --> wenn Bombe spawnt evtl. dramatischer Tusch oder schneller ? oder lauter ? oder generell anders
+  - Bei Verlieren traurig aber sanft und leise, soll nicht zu auffällig sein und in den Vordergrund geraten --> soll zu Hauptmenü-Musik übergehen
+  - Bei Gewinnen und übergehen in Endlosmodus oder bei Brechen des Highscores (?) aufgeregte aber sehr befriedigte Musik --> bei Verlieren immer noch diese Musik
+  

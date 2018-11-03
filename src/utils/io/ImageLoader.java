@@ -9,7 +9,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import utils.ui.DialogManager;
+import snake.io.Logger;
+import snake.ui.DialogManager;
 
 /** 
  * 	@author Cedric	

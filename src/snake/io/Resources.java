@@ -11,7 +11,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
- * @author leo
+ * @author Leo
  *
  */
 public class Resources {
@@ -36,9 +36,19 @@ public class Resources {
 		}
 		BufferedImage res = getImage(source);
 		if(cache) {
+			Logger.gdL().logInfo("Putting image into cache: " + source.getPath());
 			imageCache.put(source, res);
 		}
 		return res;
 	}
-
+	
+	public static boolean removeCachedImage(File source) {
+		if (imageCache.containsKey(source)) {
+			Logger.gdL().logInfo("Removing image from cache: " + source.getPath());
+			imageCache.remove(source);
+			return true;
+		} else
+			return false;
+	}
+	
 }

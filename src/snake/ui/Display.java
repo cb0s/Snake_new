@@ -5,18 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
+import java.awt.Insets;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.JFrame;
 
@@ -25,7 +18,6 @@ import snake.io.Logger;
 import snake.mechanics.Clock;
 import snake.mechanics.Clockable;
 import snake.ui.states.State;
-import utils.ui.MouseManager;
 
 /**
  * A display showing a {@link State} with either a fixed or unlimited framerate.
@@ -81,7 +73,7 @@ public class Display extends JFrame {
 		setSize(config.width, config.height);
 		setResizable(config.resizable);
 		setUndecorated(config.undecorated);
-
+		
 		add(canvas);
 		pack();
 		center();
@@ -220,15 +212,15 @@ public class Display extends JFrame {
 	// * Inner classes *
 	// *****************
 	public class RenderWorker implements Clockable {
-		BufferStrategy bs;
-		Graphics2D g;
+		private BufferStrategy bs;
+		private Graphics2D g;
 		
 		@Override
 		public void tick(float delta) {
 			//Preparation
 			bs = canvas.getBufferStrategy();
 			g = (Graphics2D) bs.getDrawGraphics();
-
+			
 			//Clear canvas
 			g.clearRect(0, 0, getSize().width, getSize().height);
 

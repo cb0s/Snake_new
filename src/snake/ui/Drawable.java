@@ -3,7 +3,7 @@ package snake.ui;
 import java.awt.Graphics2D;
 
 /**
- * @author leo
+ * @author Leo
  */
 public interface Drawable {
 

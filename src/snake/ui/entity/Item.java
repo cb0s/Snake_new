@@ -2,13 +2,26 @@ package snake.ui.entity;
 
 import java.awt.image.BufferedImage;
 
-@SuppressWarnings("serial")
+import snake.io.Files;
+import utils.io.IniAdapter;
+
 public abstract class Item extends Entity {
 
 //	private int currentImage;
 //	private boolean curentImageIncrease;
 //	protected BufferedImage[] resources;
 	
+	protected final static IniAdapter ITEM_INI;
+	
+	static {
+		ITEM_INI = new IniAdapter(Files.internal.DATA_PATH + "ini/game/item.ini");
+	}
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Not implemented yet!
 	 * 
@@ -26,9 +39,14 @@ public abstract class Item extends Entity {
 		throw new NoSuchMethodException("This Constructor is not implemented yet!");
 	}
 	
+	public Item(BufferedImage resource, int x, int y) {
+		super (resource, x, y);
+	}
+	
 	public Item(BufferedImage resource, int x, int y, int width, int height) {
 		super(resource, x, y, width, height);
 	}
+	
 	
 	/*
 	public BufferedImage[] getResources() {

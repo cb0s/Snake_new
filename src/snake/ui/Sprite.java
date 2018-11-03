@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
- * @author leo
+ * @author Leo
  */
 @SuppressWarnings("serial")
 public class Sprite extends Rectangle implements Drawable {
@@ -16,8 +16,6 @@ public class Sprite extends Rectangle implements Drawable {
 	protected final BufferedImage resource;
 	protected volatile double radRotation = 0;
 	protected volatile int srcX1, srcY1, srcX2, srcY2, originX, originY;
-	
-	
 	
 	
 	public Sprite(BufferedImage image) {
@@ -29,7 +27,7 @@ public class Sprite extends Rectangle implements Drawable {
 	}
 	
 	public Sprite(BufferedImage image, int srcX, int srcY, int srcWidth, int srcHeight) {
-		if(image == null) throw new NullPointerException("image was null");
+		if(image == null) throw new NullPointerException("Image cannot be null!");
 		this.resource = image;
 		setRegion(srcX, srcY, srcWidth, srcHeight);
 		setSize(srcWidth, srcHeight);

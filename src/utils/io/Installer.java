@@ -15,7 +15,8 @@ import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
-import utils.ui.DialogManager;
+import snake.io.Logger;
+import snake.ui.DialogManager;
 
 // TODO: REWRITE INSTALLER! --> Add progress, add resume, ...
 /** 

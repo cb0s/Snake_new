@@ -7,7 +7,8 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import utils.ui.DialogManager;
+import snake.io.Logger;
+import snake.ui.DialogManager;
 
 /**
  * 	@author Cedric	

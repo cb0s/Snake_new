@@ -1,6 +1,9 @@
 data/
 data/ini/
 data/ini/game/
+data/ini/game/fruits.ini
+data/ini/game/game.ini
+data/ini/game/item.ini
 data/ini/game/snake.ini
 data/ini/gui/
 data/ini/gui/button.ini
@@ -26,5 +29,6 @@ res/ui/buttons/maximizeButtonP.png
 res/ui/buttons/minimizeButton.png
 res/ui/buttons/minimizeButtonF.png
 res/ui/buttons/minimizeButtonP.png
+res/ui/entities/
 res/ui/background_main-menu.png
 res/ui/snake_logo.png

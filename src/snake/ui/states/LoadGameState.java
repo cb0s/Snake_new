@@ -8,19 +8,26 @@ import snake.mechanics.Clock;
 import snake.mechanics.Clockable;
 import snake.ui.Sprite;
 
+// TODO Write a smooth Loading Screen
 public class LoadGameState extends State implements Clockable {
 	
-	Sprite backgroundImage, transparentSnakeLogo;
-	Clock rotClock;
-	
-	
-	
+	// **********
+	// * Fields *
+	// **********
+	private Sprite backgroundImage, transparentSnakeLogo;
+	private Clock rotClock;
 
+	
+	// ****************
+	// * Constructors *
+	// ****************
+	/**
+	 * 
+	 * @param parent
+	 */
 	public LoadGameState(Game parent) {
 		super(parent);
 	}
-	
-	
 	
 	
 	@Override

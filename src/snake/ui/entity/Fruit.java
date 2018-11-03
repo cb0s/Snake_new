@@ -2,11 +2,20 @@ package snake.ui.entity;
 
 import java.awt.image.BufferedImage;
 
+import snake.io.Files;
+import utils.io.IniAdapter;
+
 @SuppressWarnings("serial")
-public class Fruit extends Item {
+public abstract class Fruit extends Item {
 	
 	private int value, special;
 	private String name;
+	
+	protected final static IniAdapter FRUIT_INI;
+	
+	static {
+		FRUIT_INI = new IniAdapter(Files.internal.DATA_PATH + "ini/game/fruits.ini");
+	}
 	
 	public Fruit(BufferedImage resource, int x, int y, int width, int height, String name, int value, int special) {
 		super (resource, x, y, width, height);

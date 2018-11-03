@@ -38,7 +38,7 @@ public class Logger extends Clock {
 	private static final String POISON_PILL = new String();
 
 
-	public static final String DEAFAULT_DATE_TIME_PATTERN = "dd/MM/yyyy-HH:mm:ss";
+	public static final String DEFAULT_DATE_TIME_PATTERN = "dd/MM/yyyy-HH:mm:ss";
 
 
 
@@ -63,13 +63,13 @@ public class Logger extends Clock {
 	// ****************
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #DEAFAULT_DATE_TIME_PATTERN}</li>
+	 * <li>{@link #DEFAULT_DATE_TIME_PATTERN}</li>
 	 * <li>{@link System#out} as output</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.
 	 */
 	public Logger() {
-		this(DEAFAULT_DATE_TIME_PATTERN, new OutputStream[] {System.out});
+		this(DEFAULT_DATE_TIME_PATTERN, new OutputStream[] {System.out});
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class Logger extends Clock {
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #DEAFAULT_DATE_TIME_PATTERN}</li>
+	 * <li>{@link #DEFAULT_DATE_TIME_PATTERN}</li>
 	 * <li>the given OutputStream as output</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
@@ -95,7 +95,7 @@ public class Logger extends Clock {
 	 * @param output the output channel
 	 */
 	public Logger(OutputStream output) {
-		this(DEAFAULT_DATE_TIME_PATTERN, new OutputStream[] {output});
+		this(DEFAULT_DATE_TIME_PATTERN, new OutputStream[] {output});
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class Logger extends Clock {
 
 	/**
 	 * Creates a new logger using: <ul>
-	 * <li>{@link #DEAFAULT_DATE_TIME_PATTERN}</li>
+	 * <li>{@link #DEFAULT_DATE_TIME_PATTERN}</li>
 	 * <li>the given OutputStreams as outputs</li>
 	 * </ul>
 	 * These things can <b>not</b> be changed afterwards to ensure consistency within a logging session.<br><br>
@@ -122,7 +122,7 @@ public class Logger extends Clock {
 	 * @param outputs the output channels
 	 */
 	public Logger(OutputStream[] outputs) {
-		this(DEAFAULT_DATE_TIME_PATTERN, outputs);
+		this(DEFAULT_DATE_TIME_PATTERN, outputs);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class Logger extends Clock {
 	 * @param prefix the prefix in front of every log
 	 */
 	public Logger(OutputStream[] outputs, String prefix) {
-		this(DEAFAULT_DATE_TIME_PATTERN, outputs, prefix);
+		this(DEFAULT_DATE_TIME_PATTERN, outputs, prefix);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class Logger extends Clock {
 	 * @param outputs the output channels
 	 */
 	public Logger(String dateTimePattern, OutputStream[] outputs) {
-		this(dateTimePattern, outputs, null);
+		this(dateTimePattern, outputs, "");
 	}
 
 	/**
@@ -270,7 +270,7 @@ public class Logger extends Clock {
 	 */
 	public synchronized void shutdown() {
 		if(isRunning()) {
-			this.log("----------------------------Session-ended----------------------------");
+			this.log("----------------------------Session-ended----------------------------------");
 			buffer.add(POISON_PILL);
 		}
 	}
@@ -299,7 +299,7 @@ public class Logger extends Clock {
 	 */
 	public static synchronized Logger getDefaultLogger() {
 		if(defaultLogger == null) {
-			defaultLogger = new Logger(DEAFAULT_DATE_TIME_PATTERN, new OutputStream[] {System.out}, "");
+			defaultLogger = new Logger(DEFAULT_DATE_TIME_PATTERN, new OutputStream[] {System.out}, "");
 		}
 		return defaultLogger;
 	}

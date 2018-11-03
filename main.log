@@ -1,0 +1,17 @@
+[03/11/2018-11:54:33] ----------------------------new-Session-started----------------------------
+[03/11/2018-11:54:33] [Info] Starting Snake
+[03/11/2018-11:54:33] [Info] Setting up Game
+[03/11/2018-11:54:33] [Info] Creating Display with title "Snake"
+[03/11/2018-11:54:33] [Info] Loading image file: res\res\ui\background_main_menu.png
+[03/11/2018-11:54:34] [Info] Putting image into cache: res\res\ui\background_main_menu.png
+[03/11/2018-11:54:34] [Info] Loading image file: res\res\ui\snake_logo_transparent.png
+[03/11/2018-11:54:34] [Info] Putting image into cache: res\res\ui\snake_logo_transparent.png
+[03/11/2018-11:54:34] [Info] Loading image from cache: res\res\ui\background_main_menu.png
+[03/11/2018-11:54:36] [Info] Loading image file: res\res\ui\tiles\field.png
+[03/11/2018-11:54:36] [Info] Trying to load field_collums from data/ini/game/game.ini
+[03/11/2018-11:54:36] [Info] Trying to load field_rows from data/ini/game/game.ini
+[03/11/2018-11:54:36] [Info] Loading image file: res\res\ui\tiles\scoreboard.png
+[03/11/2018-11:54:36] [Info] Trying to load level_max from data/ini/game/game.ini
+[03/11/2018-11:54:36] [Info] Game successfully started
+[03/11/2018-11:54:45] [Info] Game stopped
+[03/11/2018-11:54:45] ----------------------------Session-ended----------------------------------

@@ -7,8 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import snake.ui.Display;
-import utils.io.Logger;
+import snake.io.Logger;
 
 /**
  * 

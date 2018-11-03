@@ -29,17 +29,16 @@ public class Button extends Tile {
 		stateChanged = false;
 	}
 
-	@Override
 	public void update() {
-		if (stateChanged) {
-			if (pressed)
-				resource = resources[2];
-			else if (focussed)
-				resource = resources[1];
-			else
-				resource = resources[0];
-			stateChanged = false;
-		}
+//		if (stateChanged) {
+//			if (pressed)
+//				resource = resources[2];
+//			else if (focussed)
+//				resource = resources[1];
+//			else
+//				resource = resources[0];
+//			stateChanged = false;
+//		}
 	}
 
 	public void fireClickEvent(MouseEvent e) {

@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 @SuppressWarnings("serial")
 public class SnakeTailPart extends SnakePart {
 
-	public SnakeTailPart(float x, float y, BufferedImage texture) {
-		super(texture, 0, 0, 0, 0);
+	public SnakeTailPart(BufferedImage texture, int x, int y) {
+		super(texture, x, y, texture.getWidth(), texture.getHeight());
 	}
 
 	@Override

@@ -10,7 +10,7 @@ package snake.mechanics;
 public interface Clockable {
 	
 	/**
-	 * Method to be periodically called by a Clock. Recieves the time elapsed since the last call in seconds.
+	 * Method to be periodically called by a Clock. Receives the time elapsed since the last call in seconds.
 	 * 
 	 * @param delta time since last call in seconds
 	 * 

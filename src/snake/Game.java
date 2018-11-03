@@ -2,11 +2,19 @@ package snake;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
+import snake.io.Files;
 import snake.io.Logger;
 import snake.ui.DialogManager;
 import snake.ui.Display;
-import snake.ui.states.*;
+import snake.ui.states.GameState;
+import snake.ui.states.GameStatePaused;
+import snake.ui.states.LoadGameState;
+import snake.ui.states.MainMenuState;
+import snake.ui.states.MenuOptionsState;
+import utils.io.IniAdapter;
 
 /**
  * 
@@ -33,7 +41,11 @@ public class Game {
 	private GameState gameState;
 	private GameStatePaused gamePausedMenu;
 
+	public final static IniAdapter GAME_INI;
 	
+	static {
+		GAME_INI = new IniAdapter(Files.internal.DATA_PATH + "ini/game/game.ini");
+	}
 	
 	
 	// ****************
@@ -75,7 +87,7 @@ public class Game {
 			e1.printStackTrace();
 		}
 		
-		display.setCurrentState(mainMenu);
+		display.setCurrentState(gameState);
 		Logger.gdL().logInfo("Game successfully started");
 	}
 	
@@ -149,12 +161,13 @@ public class Game {
 	
 	
 	/**
-	 * This method starts the program with the arguments args.
+	 * This method starts the program with the arguments <code>args</code>.
 	 * 
 	 * @param args Arguments when for starting program
 	 */
 	public static void main(String[] args) {
 		try {
+			Logger.setDefaultLogger(new Logger(new OutputStream[] {System.out, new FileOutputStream("main.log")}));
 			Logger.getDefaultLogger().logInfo("Starting Snake");
 			
 			GameConfig config = new GameConfig();

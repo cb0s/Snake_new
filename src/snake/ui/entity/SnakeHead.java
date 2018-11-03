@@ -2,12 +2,17 @@ package snake.ui.entity;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Stack;
 
 @SuppressWarnings("serial")
 public class SnakeHead extends SnakePart {
 
-	public SnakeHead(float x, float y, BufferedImage texture) {
-		super(null, 0, 0, 0, 0);
+	private Stack<SnakePart> snakeTails;
+	
+	public SnakeHead(BufferedImage texture, int x, int y) {
+		super(texture, x, y, texture.getWidth(), texture.getHeight());
+		
+		snakeTails = new Stack<SnakePart>();
 	}
 
 	@Override

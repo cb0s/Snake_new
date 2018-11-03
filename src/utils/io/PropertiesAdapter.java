@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import snake.io.Logger;
+
 /**
  * 
  * @author Cedric

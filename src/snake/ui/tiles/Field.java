@@ -1,10 +1,15 @@
 package snake.ui.tiles;
 
+import java.awt.image.BufferedImage;
+
+import snake.ui.entity.Entity;
+import snake.ui.entity.SnakeHead;
+
 @SuppressWarnings("serial")
-public class Field extends Tile {
+public class Field extends Tile implements Spawnable {
 	private int rows, collums;
-	public Field(int rows, int collums) {
-		super(null, 0, 0, 0, 0);
+	public Field(BufferedImage background, int x, int y, int rows, int collums) {
+		super(background, x, y, background.getWidth(), background.getHeight());
 		this.rows = rows;
 		this.collums = collums;
 	}
@@ -17,8 +22,16 @@ public class Field extends Tile {
 		return collums;
 	}
 	
+	public SnakeHead getSnake() {
+		return null;
+	}
+
+	public Entity getEntityOnField(int x, int y) {
+		return null;
+	}
+
 	@Override
-	public void update() {
+	public void spawn(Entity entity) {
 		
 	}
 }

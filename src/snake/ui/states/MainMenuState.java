@@ -11,7 +11,7 @@ import snake.ui.Sprite;
 
 public class MainMenuState extends State {
 	
-	Sprite backgroundImage;
+	private Sprite backgroundImage;
 
 	
 	
