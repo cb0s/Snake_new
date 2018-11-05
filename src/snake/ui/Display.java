@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
+import java.awt.dnd.DragGestureRecognizer;
 import java.awt.image.BufferStrategy;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -65,6 +66,8 @@ public class Display extends JFrame {
 			renderLogger = Logger.gdL();
 		}
 
+		setIconImage(config.image);
+		
 		//setUndecorated(true);
 		canvas = new Canvas();
 		canvas.setFocusable(false);

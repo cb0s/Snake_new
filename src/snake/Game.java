@@ -60,6 +60,7 @@ public class Game {
 	 */
 	public Game(GameConfig config) {
 		Logger.gdL().logInfo("Setting up Game");
+		long milliseconds = System.currentTimeMillis();
 		this.config = config;
 		display = new Display(config);
 		display.addWindowListener(new WindowAdapter() {
@@ -80,12 +81,15 @@ public class Game {
 		gamePausedMenu = new GameStatePaused(this);
 		gamePausedMenu.prepare();
 		
-		//Simulate loading time
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+		if (System.currentTimeMillis() - 1000 < milliseconds) {
+			//Simulate loading time
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 		}
+
 		
 		display.setCurrentState(gameState);
 		Logger.gdL().logInfo("Game successfully started");

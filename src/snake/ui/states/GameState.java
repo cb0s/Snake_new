@@ -9,6 +9,7 @@ import snake.io.Files;
 import snake.io.Resources;
 import snake.ui.tiles.Field;
 import snake.ui.tiles.ScoreBoard;
+import utils.io.ImageLoader;
 
 public class GameState extends State {
 
@@ -39,6 +40,7 @@ public class GameState extends State {
 	public void reset() {
 		// This image needn't be safed in the buffer as you just have one instance per game
 		BufferedImage img = Resources.getImage(new File(Files.internal.RES_UI_PATH + "tiles/field.png"));
+		img = ImageLoader.scale(img, (int)(img.getWidth()/((double)img.getHeight()/parent.getConfig().height)), parent.getConfig().height);
 		int collums = Integer.parseInt(Game.GAME_INI.getString("field_collums"));
 		int rows = Integer.parseInt(Game.GAME_INI.getString("field_rows"));
 		gameField = new Field(img, (int)(parent.getConfig().width-img.getWidth())/2, (int)(parent.getConfig().height-img.getHeight())/2, rows, collums);
@@ -46,6 +48,10 @@ public class GameState extends State {
 		img = Resources.getImage(new File(Files.internal.RES_UI_PATH + "tiles/scoreboard.png"));
 		scoreBoard = new ScoreBoard(img, parent.getConfig().width-img.getWidth(), 20, img.getWidth(), img.getHeight(), Integer.parseInt(Game.GAME_INI.getString("level_max"))); 
 		scoreBoard.setBounds(parent.getConfig().width-img.getWidth(), 20, img.getWidth(), img.getHeight());
+	}
+	
+	public void startListener() {
+		
 	}
 	
 	@Override
